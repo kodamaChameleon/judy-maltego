@@ -1,0 +1,2 @@
+Owner,Author,Disclaimer,Description,Version,Name,UIName,URL,entityName,oAuthSettingId,transformSettingIDs,seedIDs
+KodamaChameleon,Kodama Chameleon <contact@kodamachameleon.com>,,Returns search results from www.judyrecords.com using name,0.1,searchname,Get judyrecords search results [judy],https://transforms.kodamachameleon.com/run/searchname,maltego.Person,,,Judy

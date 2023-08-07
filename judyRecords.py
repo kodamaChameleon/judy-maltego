@@ -11,7 +11,7 @@ def check_status(response):
         print(f"Error: Unable to fetch the search results. Status code: {response.status_code}")
         return False
 
-class judyrecord:
+class judy:
 
     def __init__(self) -> None:
         self.addSearch_Url = "https://www.judyrecords.com/addSearchJob"
@@ -128,20 +128,11 @@ class judyrecord:
         return record
 
 
-if __name__ == "__main__":
-    #search_terms = input("Enter your search terms separated by spaces: ")
-    search_terms = "vanita sunok ryales"
-    judy = judyrecord()
-    # judy.addSearchJob(search_terms)
-    # status = judy.checkJobStatus()["status"]
-    # records = judy.aggregateResults(status)
-
-    records = [{
-        'Title': 'Las Vegas, Nevada Justice Court Record',
-        'link': 'https://judyrecords.com/record/q72mvlop28a8',
-        'snippet': 'the state of nevada vs. ryales, vanita sunok case type: traffic date filed: 09 vanita sunok charge information charges: ryales, vanita sunok statute level date 1 2015 web receipt # t-2015-256440 ryales, vanita sunok (198.00) 12/08/2015'}
-    ]
-
-    judy.caseDetails(records[0])
-
-    print(records)
+# if __name__ == "__main__":
+#     search_terms = input("Enter your search terms separated by spaces: ")
+#     judy = judy()
+#     judy.addSearchJob(search_terms)
+#     status = judy.checkJobStatus()["status"]
+#     records = judy.aggregateResults(status)
+#     for record in records:
+#         judy.caseDetails(record)
