@@ -23,10 +23,13 @@ class judy:
         self.cookies = None
 
     # Create a search
-    def addSearchJob(self, search_terms):
+    def addSearchJob(self, search_terms, input_type):
 
         # Construct the search URL
-        search_terms_encoded = '+'.join(search_terms.split())
+        if input_type == "name":
+            search_terms_encoded = '+'.join(search_terms.split()) + '%2C'*3
+        if input_type == "phrase":
+            search_terms_encoded = '%22' + '+'.join(search_terms.split()) + '%22'
         search_url = f"{self.addSearch_Url}?search={search_terms_encoded}"
 
         # Send the search request
@@ -104,10 +107,16 @@ class judy:
         soup = BeautifulSoup(response.content, 'html.parser')
 
         # Identify case number by class="ssCaseDetailCaseNbr"
-        record["case_number"] = soup.find('div', class_='ssCaseDetailCaseNbr').find('span').get_text()
+        try:
+            record["case_number"] = soup.find('div', class_='ssCaseDetailCaseNbr').find('span').get_text()
+        except:
+            None
 
         # Identify case number by id='PIr11'
-        record["defendent"] = soup.find('th', class_='ssTableHeader', id='PIr11').get_text()
+        try:
+            record["defendent"] = soup.find('th', class_='ssTableHeader', id='PIr11').get_text()
+        except:
+            None
 
         charges_element = soup.find('caption', text='Charge Information')
         if charges_element:

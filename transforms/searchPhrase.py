@@ -6,13 +6,13 @@ import judyRecords
 
 @registry.register_transform(
     display_name="Get judyrecords search results [judy]", 
-    input_entity="maltego.Person",
-    description='Returns search results from www.judyrecords.com using name',
+    input_entity="maltego.Phrase",
+    description='Returns search results from www.judyrecords.com using phrase',
     settings=[],
     output_entities=["maltego.Unknown"],
     transform_set=judy_set
     )
-class searchName(DiscoverableTransform):
+class searchPhrase(DiscoverableTransform):
     
     @classmethod
     def create_entities(cls, request: MaltegoMsg, response: MaltegoTransform):
@@ -24,7 +24,7 @@ class searchName(DiscoverableTransform):
 
             # Conduct search from judyrecords
             judy = judyRecords.judy()
-            judy.addSearchJob(search_terms, "name")
+            judy.addSearchJob(search_terms, "phrase")
             status = judy.checkJobStatus()["status"]
             records = judy.aggregateResults(status)
 

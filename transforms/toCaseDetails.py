@@ -4,33 +4,15 @@ from maltego_trx.transform import DiscoverableTransform
 from extensions import registry, judy_set
 import judyRecords
 
-# Define how to convert data types
-class tranx:
-
-    def __init__(self, record, response) -> None:
-        self.record = record
-        self.response = response
-        pass
-
-    def case_number(self):
-        caseNumber = self.response.addEntity("maltego.UniqueIdentifier", value = self.record["case_number"])
-        caseNumber.addProperty("identifierType", value = "Case Number")
-
-    def charges(self):
-        self.response.addEntity("maltego.Phrase", value = self.record["Charges"])
-
-    def statute(self):
-        statute_number = self.response.addEntity("maltego.UniqueIdentifier", value = self.record["Statute"])
-        statute_number.addProperty("identifierType", value = "Statute")
-
-    def level(self):
-        self.response.addEntity("maltego.hashtag", value = self.record["Level"])
-
-    def defendent(self):
-        self.response.addEntity("maltego.Person", value = self.record["defendent"])
-
-    def date(self):
-        self.response.addEntity("maltego.DateTime", value = self.record["Date"])
+# Error Handling
+def add_entity(entity_type, value, response, additional_properties=None):
+    try:
+        entity = response.addEntity(entity_type, value=value)
+        if additional_properties:
+            for prop_key, prop_value in additional_properties.items():
+                entity.addProperty(prop_key, value=prop_value)
+    except KeyError as e:
+        response.addUIMessage("Conversion to {} entity failed: {}".format(entity_type, str(e)))
 
 
 @registry.register_transform(
@@ -56,22 +38,48 @@ class toCaseDetails(DiscoverableTransform):
             # Conduct search from judyrecords
             judy = judyRecords.judy()
             record = judy.caseDetails(record_url)
-            
-            # 
-            convert_records = tranx(record, response)
-            available_entities = {
-                "case_number": convert_records.case_number(),
-                "Charges": convert_records.charges(),
-                "Statue": convert_records.statute(),
-                "Level": convert_records.level(),
-                "defendent": convert_records.defendent(),
-                "Date": convert_records.date(),
-            }
 
-            # Convert results to entities
-            for key in record:
-                if record[key] and key in available_entities:
-                    available_entities[key]
+            # List available entity types
+            available = [
+                {
+                    "key": "case_number",
+                    "type": "maltego.UniqueIdentifier",
+                    "additional_properties": {
+                        "identifierType": "Case Number"
+                    }
+                },
+                {
+                    "key": "Charges",
+                    "type": "maltego.Phrase",
+                    "additional_properties": {}
+                },
+                {
+                    "key": "Statute",
+                    "type": "maltego.UniqueIdentifier",
+                    "additional_properties": {
+                        "identifierType": "Statute"
+                    }
+                },
+                {
+                    "key": "Level",
+                    "type": "maltego.hashtag",
+                    "additional_properties": {}
+                },
+                {
+                    "key": "defendent",
+                    "type": "maltego.Person",
+                    "additional_properties": {}
+                },
+                {
+                    "key": "Date",
+                    "type": "maltego.DateTime",
+                    "additional_properties": {}
+                },
+            ]
+
+            for entity in available:
+                if entity["key"] in record:
+                    add_entity(entity["type"], record[entity["key"]], response, entity["additional_properties"])
             
 
         trio.run(main) # running our async code in a non-async code
