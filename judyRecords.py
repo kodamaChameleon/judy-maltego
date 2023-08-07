@@ -105,6 +105,8 @@ class judy:
 
         # Identify case number by class="ssCaseDetailCaseNbr"
         record["case_number"] = soup.find('div', class_='ssCaseDetailCaseNbr').find('span').get_text()
+
+        # Identify case number by id='PIr11'
         record["defendent"] = soup.find('th', class_='ssTableHeader', id='PIr11').get_text()
 
         charges_element = soup.find('caption', text='Charge Information')
@@ -113,7 +115,7 @@ class judy:
             tbody = charges_element.find_parent('table')
             headers = []
             for th_element in tbody.find_all('th'):
-                text = th_element.get_text().replace(record['defendent'], "").strip()
+                text = th_element.get_text().replace(record['defendent'], "").replace(":","").strip()
                 if text:
                     headers.append(text)
             rows = []

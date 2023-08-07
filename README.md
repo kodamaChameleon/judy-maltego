@@ -32,9 +32,10 @@ Import Judy-Maltego.mtz and entities from the entities folder into Maltego to be
 
 <img src="./img/judy_demo.png" width="600px">
 
-| Name               | Description                                                       | Input         |
-|--------------------|-------------------------------------------------------------------|---------------|
-| searchName         | Returns search results from www.judyrecords.com using name        | maltego.Person|
+| Name               | Description                                                       | Input              |
+|--------------------|-------------------------------------------------------------------|--------------------|
+| searchName         | Returns search results from www.judyrecords.com using name        | maltego.Person     |
+| toCaseDetails      | Extracts case details from judyrecords.com using url              | maltego.judyRecord |
 
    
 ## 📜 License
