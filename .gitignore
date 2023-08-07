@@ -1,3 +1,4 @@
 *.mtz
 !entities/*.mtz
 __pycache__
+test.py

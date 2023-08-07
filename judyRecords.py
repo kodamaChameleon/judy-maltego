@@ -50,7 +50,7 @@ class judy:
 
         response = requests.get(self.results_Url + str(page), headers=self.headers, cookies=self.cookies)
 
-        # Parse response for links
+        # Parse response for urls
         soup = BeautifulSoup(response.content, 'html.parser')
         results = {
             "records": [],
@@ -67,16 +67,16 @@ class judy:
 
             record = {
                 "Title": a_tag.get_text(),
-                "link": "https://judyrecords.com" + a_tag['href'],
+                "url": "https://judyrecords.com" + a_tag['href'],
                 "snippet": concatenated_snippet
             }
 
             results["records"].append(record)
 
         # Identify the number of pages
-        page_links = soup.find_all('a', {'data-ref-page': True})
-        if page_links:
-            last_div = page_links[-1]
+        page_urls = soup.find_all('a', {'data-ref-page': True})
+        if page_urls:
+            last_div = page_urls[-1]
             last_page_value = last_div['data-ref-page']
 
         return results
@@ -98,9 +98,9 @@ class judy:
     def caseDetails(self, record: dict):
 
         # Send the search request
-        response = requests.get(record["link"], headers=self.headers)
+        response = requests.get(record["url"], headers=self.headers)
 
-        # Parse response for links
+        # Parse response for urls
         soup = BeautifulSoup(response.content, 'html.parser')
 
         # Identify case number by class="ssCaseDetailCaseNbr"

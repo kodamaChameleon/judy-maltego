@@ -32,7 +32,7 @@ class searchName(DiscoverableTransform):
             for record in records:
                 judyRecord = response.addEntity("maltego.judyRecord")
                 judyRecord.addProperty("title", value = record["Title"])
-                judyRecord.addProperty("properties.url", value = record["link"])
+                judyRecord.addProperty("properties.url", value = record["url"])
                 judyRecord.addProperty("snippet", value = record["snippet"])
 
         trio.run(main) # running our async code in a non-async code
