@@ -165,3 +165,18 @@ def type_4(record, soup):
                         record[value] = text.replace(key, "").strip()
 
     return record
+
+def type_5(record, soup):
+
+    tables = soup.find_all('table')
+    for table in tables:
+        columns = len(table.find_all('td'))
+        rows = len(table.find_all('tr'))
+        
+        if rows == 2:
+            for column_index in range(columns):
+                record[table.find_all('tr')[0].find_all('td')[column_index]] = table.find_all('tr')[1].find_all('td')[column_index]
+
+        print("hello")
+
+    return record

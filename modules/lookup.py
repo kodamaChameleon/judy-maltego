@@ -117,6 +117,7 @@ class judy:
             "District Court, N.D. Indiana Record": record_types.type_3(record, soup),
             "District Court, D. New Jersey Record": record_types.type_3(record, soup),
             "Chatham County, Georgia Court Record": record_types.type_4(record, soup),
+            "Grand Rapids, Michigan District Court Record": record_types.type_5(record, soup),
         }
 
         record = available[record["Title"]]
