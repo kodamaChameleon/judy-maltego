@@ -109,7 +109,8 @@ class judy:
 
         # Select the format for the appropriate record type
         record_types = {
-            "Las Vegas, Nevada Justice Court Record": data_types.lasVegas_nevada_justiceCourt(record, soup)
+            "Las Vegas, Nevada Justice Court Record": data_types.nevada_courts(record, soup),
+            "Clark County, Nevada Court Record": data_types.nevada_courts(record, soup),
         }
 
         record = record_types[record["Title"]]

@@ -1,5 +1,5 @@
 # Handle records from Las Vegas, Nevada Justice Court Record
-def lasVegas_nevada_justiceCourt(record, soup):
+def nevada_courts(record, soup):
 
     try:
         record["Case_Number"] = soup.find('div', class_='ssCaseDetailCaseNbr').find('span').get_text()
