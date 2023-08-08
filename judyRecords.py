@@ -105,248 +105,240 @@ class judy:
 
         # Parse response for urls
         soup = BeautifulSoup(response.content, 'html.parser')
-        record_page = data_types()
 
-        # Avalable data types
-        options = [
-            record_page.case_number(soup),
-            record_page.case_type(soup),
-            record_page.subtype(soup),
-            record_page.cross_reference(soup),
-            record_page.date_filed(soup),
-            record_page.dob(soup),
-            record_page.address(soup),
-            record_page.phone(soup),
-            record_page.location(soup),
-            record_page.defendent(soup),
-            record_page.plaintiff(soup),
-            record_page.other(soup),
-            record_page.charges(soup)
-        ]
-        for option in options:
-            try:
-                record.update(option)
-            except:
-                continue
+        # Select the format for the appropriate record type
+        record_types = {
+            "Las Vegas, Nevada Justice Court Record": lasVegas_nevada_justiceCourt(record, soup)
+        }
+
+        record = record_types[record["Title"]]
 
         return record
-
-# Extract data types
-class data_types:
-
-    def __init__(self) -> None:
-        pass
     
-    def case_number(self, soup):
+# Handle records from Las Vegas, Nevada Justice Court Record
+def lasVegas_nevada_justiceCourt(record, soup):
 
-        try:
-            record = {
-                "Case_Number": soup.find('div', class_='ssCaseDetailCaseNbr').find('span').get_text()
-            }
+    try:
+        record["Case_Number"] = soup.find('div', class_='ssCaseDetailCaseNbr').find('span').get_text()
+    except AttributeError:
+        record["Case_Number"] = ""
 
-            return record
-        except:
-            None
+    try:
+        record["Case_Type"] = soup.find('th', text='Case Type:').find_parent('tr').find('td').text.strip()
+    except AttributeError:
+        record["Case_Type"] = ""
 
-    def case_type(self, soup):
+    try:
+        record["Subtype"] = soup.find('th', text='Subtype:').find_parent('tr').find('td').text.strip()
+    except AttributeError:
+        record["Subtype"] = ""
 
-        try:
-            record = {
-                "Case_Type": soup.find('th', text='Case Type:').find_parent('tr').find('td').text.strip()
-            }
+    try:
+        record["Date_Filed"] = soup.find('th', text='Date Filed:').find_parent('tr').find('td').text.strip()
+    except AttributeError:
+        record["Date_Filed"] = ""
 
-            return record
-        except:
-            try:
-                record = {
-                    "Case_Type": soup.find('li', text='Case Type:').find_next('li').text.strip()
-                }
+    try:
+        record["Location"] = soup.find('th', text='Location:').find_parent('tr').find('td').text.strip()
+    except AttributeError:
+        record["Location"] = ""
 
-                return record
-            except:
-                None
+    try:
+        record["Cross_Reference"] = soup.find('th', text='Cross-Reference Case Number:').find_parent('tr').find('td').text.strip()
+    except AttributeError:
+        record["Cross_Reference"] = ""
 
-    def subtype(self, soup):
+    defendants = soup.find_all('th', text='Defendant')
+    if defendants:
+        record["Defendent"] = []
 
-        try:
-            record = {
-                "Subtype": soup.find('th', text='Subtype:').find_parent('tr').find('td').text.strip()
-            }
+        for defendant in defendants:
+            name = defendant.find_next('th').text.strip()
+            record["Defendent"].append(name)
 
-            return record
-        except:
-            None
+    plaintiffs = soup.find_all('th', text='Plaintiff')
+    if plaintiffs:
+        record["Plaintiff"] = []
 
-    def dob(self, soup):
+        for plaintiff in plaintiffs:
+            name = plaintiff.find_next('th').text.strip()
+            record["Plaintiff"].append(name)
 
-        try:
-            record = {
-                "DOB": soup.find('li', text='DOB', class_="ptyAttyLabel").find_next('li', class_="ptyAttyInfo").text.strip()
-            }
+    others = soup.find_all('th', text='Other')
+    if others:
+        record["Other"] = []
 
-            return record
-        except:
-            None
+        for other in others:
+            name = other.find_next('th').text.strip()
+            record["Other"].append(name)
 
-    def address(self, soup):
+    charges_element = soup.find('caption', text='Charge Information')
+    if charges_element:
 
-        try:
-            record = {
-                "Address": soup.find('li', text='Address', class_="ptyAttyLabel").find_next('li', class_="ptyAttyInfo").text.strip()
-            }
+        tbody = charges_element.find_parent('table')
+        headers = []
+        for th_element in tbody.find_all('th'):
+            text = th_element.get_text().split(':')[0].strip()
+            if text:
+                headers.append(text)
+        rows = []
+        for td_element in tbody.find_all('td'):
+            text = td_element.get_text().strip()
+            if text:
+                rows.append(text)
 
-            return record
-        except:
-            None
+        charges = dict(zip(headers, rows[1:]))
+        record.update(charges)
 
-    def phone(self, soup):
+    return record
 
-        try:
-            record = {
-                "Phone": soup.find('li', text='Phone', class_="ptyAttyLabel").find_next('li', class_="ptyAttyInfo").text.strip()
-            }
+    
 
-            return record
-        except:
-            None
+#     def case_type(self, soup):
 
-    def cross_reference(self, soup):
+#         try:
+#             
+#         except:
+#             try:
+#                 record = {
+#                     "Case_Type": soup.find('li', text='Case Type:').find_next('li').text.strip()
+#                 }
 
-        try:
-            record = {
-                "Cross_Reference": soup.find('th', text='Cross-Reference Case Number:').find_parent('tr').find('td').text.strip()
-            }
+#                 return record
+#             except:
+#                 None
 
-            return record
-        except:
-            None
+#     def dob(self, soup):
 
-    def date_filed(self, soup):
+#         try:
+#             record = {
+#                 "DOB": soup.find('li', text='DOB', class_="ptyAttyLabel").find_next('li', class_="ptyAttyInfo").text.strip()
+#             }
 
-        try:
-            record = {
-                "Date_Filed": soup.find('th', text='Date Filed:').find_parent('tr').find('td').text.strip()
-            }
+#             return record
+#         except:
+#             None
 
-            return record
-        except:
-            try:
-                record = {
-                    "Date_Filed": soup.find('li', text='File Date:').find_next('li').text.strip()
-                }
+#     def address(self, soup):
 
-                return record
-            except:
-                None
+#         try:
+#             record = {
+#                 "Address": soup.find('li', text='Address', class_="ptyAttyLabel").find_next('li', class_="ptyAttyInfo").text.strip()
+#             }
 
-    def defendent(self, soup):
+#             return record
+#         except:
+#             None
 
-        try:
-            defendants = soup.find_all('th', text='Defendant')
+#     def phone(self, soup):
 
-            record = {
-                    "Defendent": []
-                }
+#         try:
+#             record = {
+#                 "Phone": soup.find('li', text='Phone', class_="ptyAttyLabel").find_next('li', class_="ptyAttyInfo").text.strip()
+#             }
 
-            if defendants:
+#             return record
+#         except:
+#             None
 
-                for defendant in defendants:
-                    name = defendant.find_next('th').text.strip()
-                    record["Defendent"].append(name)
+#     def cross_reference(self, soup):
+
+#         try:
+#             record = {
+#                 "Cross_Reference": soup.find('th', text='Cross-Reference Case Number:').find_parent('tr').find('td').text.strip()
+#             }
+
+#             return record
+#         except:
+#             None
+
+#     def date_filed(self, soup):
+
+#         try:
+#             record = {
+#                 "Date_Filed": soup.find('th', text='Date Filed:').find_parent('tr').find('td').text.strip()
+#             }
+
+#             return record
+#         except:
+#             try:
+#                 record = {
+#                     "Date_Filed": soup.find('li', text='File Date:').find_next('li').text.strip()
+#                 }
+
+#                 return record
+#             except:
+#                 None
+
+#     def defendent(self, soup):
+
+#         try:
             
-            else:
-                target_strings = [' - DEFENDANT ', ' - defendant ', ' - Defendant ']
-                defendants = []
-                for item in target_strings:
-                    defendants += soup.find_all('div', text=item)
+#             else:
+#                 target_strings = [' - DEFENDANT ', ' - defendant ', ' - Defendant ']
+#                 defendants = []
+#                 for item in target_strings:
+#                     defendants += soup.find_all('div', text=item)
 
-                for defendant in defendants:
-                    name = defendant.parent.find('div').text.strip()
-                    record["Defendent"].append(name)
+#                 for defendant in defendants:
+#                     name = defendant.parent.find('div').text.strip()
+#                     record["Defendent"].append(name)
 
-            if record["Defendent"]:
-                return record
-        except:
-            None
+#             if record["Defendent"]:
+#                 return record
+#         except:
+#             None
     
-    def plaintiff(self, soup):
+#     def plaintiff(self, soup):
 
-        try:
-            plaintiffs = soup.find_all('th', text='Plaintiff')
-
-            record = {
-                "Plaintiff": []
-            }
-
-            if plaintiffs:
-
-                for plaintiff in plaintiffs:
-                    name = plaintiff.find_next('th').text.strip()
-                    record["Plaintiff"].append(name)
+#         try:
             
-            else:
-                target_strings = [' - PLAINTIFF ', ' - plaintiff ', ' - Plaintiff ']
-                plaintiffs = []
-                for item in target_strings:
-                    plaintiffs += soup.find_all('div', text=item)
+#             else:
+#                 target_strings = [' - PLAINTIFF ', ' - plaintiff ', ' - Plaintiff ']
+#                 plaintiffs = []
+#                 for item in target_strings:
+#                     plaintiffs += soup.find_all('div', text=item)
 
-                for plaintiff in plaintiffs:
-                    name = plaintiff.parent.find('div').text.strip()
-                    record["Plaintiff"].append(name)
+#                 for plaintiff in plaintiffs:
+#                     name = plaintiff.parent.find('div').text.strip()
+#                     record["Plaintiff"].append(name)
 
-            if record["Plaintiff"]:
-                return record
-        except:
-            None
+#             if record["Plaintiff"]:
+#                 return record
+#         except:
+#             None
         
-    def other(self, soup):
-
-        try:
-            others = soup.find_all('th', text='Other')
-
-            record = {
-                "Other": []
-            }
-
-            for other in others:
-                name = other.find_next('th').text.strip()
-                record["Other"].append(name)
-
-            if record["Other"]:
-                return record
-        except:
-            None
     
-    def charges(self, soup):
+#     def charges(self, soup):
 
-        charges_element = soup.find('caption', text='Charge Information')
-        if charges_element:
+#         charges_element = soup.find('caption', text='Charge Information')
+#         if charges_element:
 
-            tbody = charges_element.find_parent('table')
-            headers = []
-            for th_element in tbody.find_all('th'):
-                text = th_element.get_text().split(':')[0].strip()
-                if text:
-                    headers.append(text)
-            rows = []
-            for td_element in tbody.find_all('td'):
-                text = td_element.get_text().strip()
-                if text:
-                    rows.append(text)
+#             tbody = charges_element.find_parent('table')
+#             headers = []
+#             for th_element in tbody.find_all('th'):
+#                 text = th_element.get_text().split(':')[0].strip()
+#                 if text:
+#                     headers.append(text)
+#             rows = []
+#             for td_element in tbody.find_all('td'):
+#                 text = td_element.get_text().strip()
+#                 if text:
+#                     rows.append(text)
 
-            charges = dict(zip(headers, rows[1:]))
-        else:
-            charges_element = soup.find('caption', text='Charges')
+#             charges = dict(zip(headers, rows[1:]))
+#         else:
+#             charges_element = soup.find('caption', text='Charges')
 
-            return charges
+#             return charges
         
-    def location(self, soup):
+#     def location(self, soup):
 
-        try:
-            record = {
-                "Location": soup.find('th', text='Location:').find_parent('tr').find('td').text.strip()
-            }
+#         try:
+#             record = {
+#                 "Location": soup.find('th', text='Location:').find_parent('tr').find('td').text.strip()
+#             }
 
-            return record
-        except:
-            None
+#             return record
+#         except:
+#             None

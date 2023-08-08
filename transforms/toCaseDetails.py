@@ -43,21 +43,28 @@ class toCaseDetails(DiscoverableTransform):
         async def main():
 
             # Retrieve name from entity
-            record_url = {
+            record = {
                 "url": request.Value,
+                "Title": request.getProperty("title")
             }
 
-            # Conduct search from judyrecords
-            judy = judyRecords.judy()
-            record = judy.caseDetails(record_url)
-
             # From list of entity types, convert scraped data to entities
-            with open("entity_types.json", "r") as json_file:
-                entities_available = json.load(json_file)
+            with open("supported.json", "r") as json_file:
+                supported = json.load(json_file)
 
-            for entity in entities_available:
-                if entity["key"] in record and record[entity["key"]]:
-                    add_entity(entity["key"], entity["type"], record[entity["key"]], response, entity["additional_properties"])
+
+            if record["Title"] in supported["Record Types"]:
+
+                # Conduct search from judyrecords
+                judy = judyRecords.judy()
+                record = judy.caseDetails(record)
+
+                for entity in supported["entities"]:
+                    if entity["key"] in record and record[entity["key"]]:
+                        add_entity(entity["key"], entity["type"], record[entity["key"]], response, entity["additional_properties"])
+            
+            else:
+                response.addEntity("maltego.Phrase", value = "Unsupported Record Type")
             
 
         trio.run(main) # running our async code in a non-async code
