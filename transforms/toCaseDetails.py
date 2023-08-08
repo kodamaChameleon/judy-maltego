@@ -2,7 +2,7 @@ import trio
 from maltego_trx.maltego import MaltegoTransform, MaltegoMsg
 from maltego_trx.transform import DiscoverableTransform
 from extensions import registry, judy_set
-import judyRecords
+from modules import lookup
 import json
 
 # Error Handling
@@ -56,7 +56,7 @@ class toCaseDetails(DiscoverableTransform):
             if record["Title"] in supported["Record Types"]:
 
                 # Conduct search from judyrecords
-                judy = judyRecords.judy()
+                judy = lookup.judy()
                 record = judy.caseDetails(record)
 
                 for entity in supported["entities"]:

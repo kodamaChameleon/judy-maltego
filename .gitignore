@@ -2,3 +2,4 @@
 !entities/*.mtz
 __pycache__
 test.py
+temp.txt
