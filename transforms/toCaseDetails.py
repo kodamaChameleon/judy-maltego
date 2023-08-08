@@ -3,6 +3,7 @@ from maltego_trx.maltego import MaltegoTransform, MaltegoMsg
 from maltego_trx.transform import DiscoverableTransform
 from extensions import registry, judy_set
 import judyRecords
+import json
 
 # Error Handling
 def add_entity(key, entity_type, value, response, additional_properties=None):
@@ -41,64 +42,9 @@ class toCaseDetails(DiscoverableTransform):
             judy = judyRecords.judy()
             record = judy.caseDetails(record_url)
 
-            # List available entity types
-            entities_available = [
-                {
-                    "key": "Case_Number",
-                    "type": "maltego.UniqueIdentifier",
-                    "additional_properties": {
-                        "identifierType": "Case Number"
-                    }
-                },
-                {
-                    "key": "Charges",
-                    "type": "maltego.Phrase",
-                    "additional_properties": {}
-                },
-                {
-                    "key": "Statute",
-                    "type": "maltego.UniqueIdentifier",
-                    "additional_properties": {
-                        "identifierType": "Statute"
-                    }
-                },
-                {
-                    "key": "Level",
-                    "type": "maltego.hashtag",
-                    "additional_properties": {
-                        "identifierType": "Level"
-                    }
-                },
-                {
-                    "key": "Case_Type",
-                    "type": "maltego.hashtag",
-                    "additional_properties": {
-                        "identifierType": "Case Type"
-                    }
-                },
-                {
-                    "key": "Subtype",
-                    "type": "maltego.hashtag",
-                    "additional_properties": {
-                        "identifierType": "Subtype"
-                    }
-                },
-                {
-                    "key": "Defendent",
-                    "type": "maltego.Person",
-                    "additional_properties": {}
-                },
-                {
-                    "key": "Date",
-                    "type": "maltego.DateTime",
-                    "additional_properties": {}
-                },
-                {
-                    "key": "Date_Filed",
-                    "type": "maltego.DateTime",
-                    "additional_properties": {}
-                },
-            ]
+            # From list of entity types, convert scraped data to entities
+            with open("entity_types.json", "r") as json_file:
+                entities_available = json.load(json_file)
 
             for entity in entities_available:
                 if entity["key"] in record:
