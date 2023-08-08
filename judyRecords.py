@@ -104,19 +104,88 @@ class judy:
         response = requests.get(record["url"], headers=self.headers)
 
         # Parse response for urls
-        soup = BeautifulSoup(response.content, 'html.parser')
+        soup = BeautifulSoup(response.content, 'html.parser').find('article', class_="record page")
+        record_page = data_types()
 
-        # Identify case number by class="ssCaseDetailCaseNbr"
+        # Avalable data types
+        options = [
+            record_page.case_number(soup),
+            record_page.case_type(soup),
+            record_page.subtype(soup),
+            record_page.date_filed(soup),
+            record_page.defendent(soup),
+            record_page.charges(soup)
+        ]
+        for option in options:
+            try:
+                record.update(option)
+            except:
+                continue
+
+        return record
+
+# Extract data types
+class data_types:
+
+    def __init__(self) -> None:
+        pass
+    
+    def case_number(self, soup):
+
         try:
-            record["case_number"] = soup.find('div', class_='ssCaseDetailCaseNbr').find('span').get_text()
+            record = {
+                "Case_Number": soup.find('div', class_='ssCaseDetailCaseNbr').find('span').get_text()
+            }
+
+            return record
         except:
             None
 
-        # Identify case number by id='PIr11'
+    def case_type(self, soup):
+
         try:
-            record["defendent"] = soup.find('th', class_='ssTableHeader', id='PIr11').get_text()
+            record = {
+                "Case_Type": soup.find('th', text='Case Type:').find_parent('tr').find('td').text.strip()
+            }
+
+            return record
         except:
             None
+
+    def subtype(self, soup):
+
+        try:
+            record = {
+                "Subtype": soup.find('th', text='Subtype:').find_parent('tr').find('td').text.strip()
+            }
+
+            return record
+        except:
+            None
+
+    def date_filed(self, soup):
+
+        try:
+            record = {
+                "Date_Filed": soup.find('th', text='Date Filed:').find_parent('tr').find('td').text.strip()
+            }
+
+            return record
+        except:
+            None
+
+    def defendent(self, soup):
+
+        try:
+            record = {
+                "Defendent": soup.find('th', text='Defendant').find_next('th').text.strip()
+            }
+
+            return record
+        except:
+            None
+    
+    def charges(self, soup):
 
         charges_element = soup.find('caption', text='Charge Information')
         if charges_element:
@@ -124,7 +193,7 @@ class judy:
             tbody = charges_element.find_parent('table')
             headers = []
             for th_element in tbody.find_all('th'):
-                text = th_element.get_text().replace(record['defendent'], "").replace(":","").strip()
+                text = th_element.get_text().split(':')[0].strip()
                 if text:
                     headers.append(text)
             rows = []
@@ -134,16 +203,5 @@ class judy:
                     rows.append(text)
 
             charges = dict(zip(headers, rows[1:]))
-            record.update(charges)
 
-        return record
-
-
-# if __name__ == "__main__":
-#     search_terms = input("Enter your search terms separated by spaces: ")
-#     judy = judy()
-#     judy.addSearchJob(search_terms)
-#     status = judy.checkJobStatus()["status"]
-#     records = judy.aggregateResults(status)
-#     for record in records:
-#         judy.caseDetails(record)
+            return charges

@@ -5,12 +5,14 @@ from extensions import registry, judy_set
 import judyRecords
 
 # Error Handling
-def add_entity(entity_type, value, response, additional_properties=None):
+def add_entity(key, entity_type, value, response, additional_properties=None):
     try:
         entity = response.addEntity(entity_type, value=value)
         if additional_properties:
             for prop_key, prop_value in additional_properties.items():
                 entity.addProperty(prop_key, value=prop_value)
+        if key in ["Defendent", "Date", "Date_Filed"]:
+            entity.setLinkLabel(key)
     except KeyError as e:
         response.addUIMessage("Conversion to {} entity failed: {}".format(entity_type, str(e)))
 
@@ -40,9 +42,9 @@ class toCaseDetails(DiscoverableTransform):
             record = judy.caseDetails(record_url)
 
             # List available entity types
-            available = [
+            entities_available = [
                 {
-                    "key": "case_number",
+                    "key": "Case_Number",
                     "type": "maltego.UniqueIdentifier",
                     "additional_properties": {
                         "identifierType": "Case Number"
@@ -63,10 +65,26 @@ class toCaseDetails(DiscoverableTransform):
                 {
                     "key": "Level",
                     "type": "maltego.hashtag",
-                    "additional_properties": {}
+                    "additional_properties": {
+                        "identifierType": "Level"
+                    }
                 },
                 {
-                    "key": "defendent",
+                    "key": "Case_Type",
+                    "type": "maltego.hashtag",
+                    "additional_properties": {
+                        "identifierType": "Case Type"
+                    }
+                },
+                {
+                    "key": "Subtype",
+                    "type": "maltego.hashtag",
+                    "additional_properties": {
+                        "identifierType": "Subtype"
+                    }
+                },
+                {
+                    "key": "Defendent",
                     "type": "maltego.Person",
                     "additional_properties": {}
                 },
@@ -75,11 +93,16 @@ class toCaseDetails(DiscoverableTransform):
                     "type": "maltego.DateTime",
                     "additional_properties": {}
                 },
+                {
+                    "key": "Date_Filed",
+                    "type": "maltego.DateTime",
+                    "additional_properties": {}
+                },
             ]
 
-            for entity in available:
+            for entity in entities_available:
                 if entity["key"] in record:
-                    add_entity(entity["type"], record[entity["key"]], response, entity["additional_properties"])
+                    add_entity(entity["key"], entity["type"], record[entity["key"]], response, entity["additional_properties"])
             
 
         trio.run(main) # running our async code in a non-async code
