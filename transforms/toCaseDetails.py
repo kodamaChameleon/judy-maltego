@@ -7,6 +7,7 @@ import json
 
 # Error Handling
 def add_entity(key, entity_type, value, response, additional_properties=None):
+    link_lables = ["Defendent", "Plaintiff", "Judge", "Date", "Date_Filed", "DOB"]
     try:
         if isinstance(value, list):
             for item in value:
@@ -14,14 +15,14 @@ def add_entity(key, entity_type, value, response, additional_properties=None):
                 if additional_properties:
                     for prop_key, prop_value in additional_properties.items():
                         entity.addProperty(prop_key, value=prop_value)
-                if key in ["Defendent", "Plaintiff", "Date", "Date_Filed", "DOB"]:
+                if key in link_lables:
                     entity.setLinkLabel(key)
         else:
             entity = response.addEntity(entity_type, value=value)
             if additional_properties:
                 for prop_key, prop_value in additional_properties.items():
                     entity.addProperty(prop_key, value=prop_value)
-            if key in ["Defendent", "Date", "Date_Filed"]:
+            if key in link_lables:
                 entity.setLinkLabel(key)
     except KeyError as e:
         response.addUIMessage("Conversion to {} entity failed: {}".format(entity_type, str(e)))

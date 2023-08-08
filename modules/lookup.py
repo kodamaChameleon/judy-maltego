@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import json
-from modules import data_types
+from modules import record_types
 
 # Error code handling
 def check_status(response):
@@ -108,11 +108,17 @@ class judy:
         soup = BeautifulSoup(response.content, 'html.parser')
 
         # Select the format for the appropriate record type
-        record_types = {
-            "Las Vegas, Nevada Justice Court Record": data_types.nevada_courts(record, soup),
-            "Clark County, Nevada Court Record": data_types.nevada_courts(record, soup),
+        available = {
+            "Las Vegas, Nevada Justice Court Record": record_types.type_1(record, soup),
+            "Clark County, Nevada Court Record": record_types.type_1(record, soup),
+            "North Las Vegas, Nevada Municipal Court Record": record_types.type_2(record, soup),
+            "District Court, E.D. Pennsylvania Record": record_types.type_3(record, soup),
+            "District Court, N.D. Illinois Record": record_types.type_3(record, soup),
+            "District Court, N.D. Indiana Record": record_types.type_3(record, soup),
+            "District Court, D. New Jersey Record": record_types.type_3(record, soup),
+            "Chatham County, Georgia Court Record": record_types.type_4(record, soup),
         }
 
-        record = record_types[record["Title"]]
+        record = available[record["Title"]]
 
         return record

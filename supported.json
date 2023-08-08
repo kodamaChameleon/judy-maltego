@@ -72,6 +72,11 @@
             }
         },
         {
+            "key": "Judge",
+            "type": "maltego.Person",
+            "additional_properties": {}
+        },
+        {
             "key": "Date",
             "type": "maltego.DateTime",
             "additional_properties": {}
@@ -97,6 +102,14 @@
             "additional_properties": {}
         },
         {
+            "key": "Reference_Link",
+            "type": "maltego.Website",
+            "additional_properties": {
+                "website.ssl-enabled": "true",
+                "ports": 443
+            }
+        },
+        {
             "key": "Date_Filed",
             "type": "maltego.DateTime",
             "additional_properties": {}
@@ -104,7 +117,13 @@
     ],
     "Record Types": [
         "Las Vegas, Nevada Justice Court Record",
-        "Clark County, Nevada Court Record"
+        "Clark County, Nevada Court Record",
+        "North Las Vegas, Nevada Municipal Court Record",
+        "District Court, E.D. Pennsylvania Record",
+        "District Court, N.D. Illinois Record",
+        "District Court, N.D. Indiana Record",
+        "District Court, D. New Jersey Record",
+        "Chatham County, Georgia Court Record"
     ]
 }
 
