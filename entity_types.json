@@ -19,6 +19,20 @@
         }
     },
     {
+        "key": "Cross_Reference",
+        "type": "maltego.UniqueIdentifier",
+        "additional_properties": {
+            "identifierType": "Cross-Reference Case Number"
+        }
+    },
+    {
+        "key": "Citation",
+        "type": "maltego.UniqueIdentifier",
+        "additional_properties": {
+            "identifierType": "Citation Number"
+        }
+    },
+    {
         "key": "Level",
         "type": "maltego.hashtag",
         "additional_properties": {
@@ -45,8 +59,40 @@
         "additional_properties": {}
     },
     {
+        "key": "Plaintiff",
+        "type": "maltego.Person",
+        "additional_properties": {}
+    },
+    {
+        "key": "Other",
+        "type": "maltego.Person",
+        "additional_properties": {
+            "identifierType": "Other"
+        }
+    },
+    {
         "key": "Date",
         "type": "maltego.DateTime",
+        "additional_properties": {}
+    },
+    {
+        "key": "DOB",
+        "type": "maltego.DateTime",
+        "additional_properties": {}
+    },
+    {
+        "key": "Phone",
+        "type": "maltego.PhoneNumber",
+        "additional_properties": {}
+    },
+    {
+        "key": "Location",
+        "type": "maltego.Location",
+        "additional_properties": {}
+    },
+    {
+        "key": "Address",
+        "type": "maltego.Location",
         "additional_properties": {}
     },
     {

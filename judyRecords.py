@@ -104,7 +104,7 @@ class judy:
         response = requests.get(record["url"], headers=self.headers)
 
         # Parse response for urls
-        soup = BeautifulSoup(response.content, 'html.parser').find('article', class_="record page")
+        soup = BeautifulSoup(response.content, 'html.parser')
         record_page = data_types()
 
         # Avalable data types
@@ -112,8 +112,15 @@ class judy:
             record_page.case_number(soup),
             record_page.case_type(soup),
             record_page.subtype(soup),
+            record_page.cross_reference(soup),
             record_page.date_filed(soup),
+            record_page.dob(soup),
+            record_page.address(soup),
+            record_page.phone(soup),
+            record_page.location(soup),
             record_page.defendent(soup),
+            record_page.plaintiff(soup),
+            record_page.other(soup),
             record_page.charges(soup)
         ]
         for option in options:
@@ -150,13 +157,64 @@ class data_types:
 
             return record
         except:
-            None
+            try:
+                record = {
+                    "Case_Type": soup.find('li', text='Case Type:').find_next('li').text.strip()
+                }
+
+                return record
+            except:
+                None
 
     def subtype(self, soup):
 
         try:
             record = {
                 "Subtype": soup.find('th', text='Subtype:').find_parent('tr').find('td').text.strip()
+            }
+
+            return record
+        except:
+            None
+
+    def dob(self, soup):
+
+        try:
+            record = {
+                "DOB": soup.find('li', text='DOB', class_="ptyAttyLabel").find_next('li', class_="ptyAttyInfo").text.strip()
+            }
+
+            return record
+        except:
+            None
+
+    def address(self, soup):
+
+        try:
+            record = {
+                "Address": soup.find('li', text='Address', class_="ptyAttyLabel").find_next('li', class_="ptyAttyInfo").text.strip()
+            }
+
+            return record
+        except:
+            None
+
+    def phone(self, soup):
+
+        try:
+            record = {
+                "Phone": soup.find('li', text='Phone', class_="ptyAttyLabel").find_next('li', class_="ptyAttyInfo").text.strip()
+            }
+
+            return record
+        except:
+            None
+
+    def cross_reference(self, soup):
+
+        try:
+            record = {
+                "Cross_Reference": soup.find('th', text='Cross-Reference Case Number:').find_parent('tr').find('td').text.strip()
             }
 
             return record
@@ -172,16 +230,90 @@ class data_types:
 
             return record
         except:
-            None
+            try:
+                record = {
+                    "Date_Filed": soup.find('li', text='File Date:').find_next('li').text.strip()
+                }
+
+                return record
+            except:
+                None
 
     def defendent(self, soup):
 
         try:
+            defendants = soup.find_all('th', text='Defendant')
+
             record = {
-                "Defendent": soup.find('th', text='Defendant').find_next('th').text.strip()
+                    "Defendent": []
+                }
+
+            if defendants:
+
+                for defendant in defendants:
+                    name = defendant.find_next('th').text.strip()
+                    record["Defendent"].append(name)
+            
+            else:
+                target_strings = [' - DEFENDANT ', ' - defendant ', ' - Defendant ']
+                defendants = []
+                for item in target_strings:
+                    defendants += soup.find_all('div', text=item)
+
+                for defendant in defendants:
+                    name = defendant.parent.find('div').text.strip()
+                    record["Defendent"].append(name)
+
+            if record["Defendent"]:
+                return record
+        except:
+            None
+    
+    def plaintiff(self, soup):
+
+        try:
+            plaintiffs = soup.find_all('th', text='Plaintiff')
+
+            record = {
+                "Plaintiff": []
             }
 
-            return record
+            if plaintiffs:
+
+                for plaintiff in plaintiffs:
+                    name = plaintiff.find_next('th').text.strip()
+                    record["Plaintiff"].append(name)
+            
+            else:
+                target_strings = [' - PLAINTIFF ', ' - plaintiff ', ' - Plaintiff ']
+                plaintiffs = []
+                for item in target_strings:
+                    plaintiffs += soup.find_all('div', text=item)
+
+                for plaintiff in plaintiffs:
+                    name = plaintiff.parent.find('div').text.strip()
+                    record["Plaintiff"].append(name)
+
+            if record["Plaintiff"]:
+                return record
+        except:
+            None
+        
+    def other(self, soup):
+
+        try:
+            others = soup.find_all('th', text='Other')
+
+            record = {
+                "Other": []
+            }
+
+            for other in others:
+                name = other.find_next('th').text.strip()
+                record["Other"].append(name)
+
+            if record["Other"]:
+                return record
         except:
             None
     
@@ -203,5 +335,18 @@ class data_types:
                     rows.append(text)
 
             charges = dict(zip(headers, rows[1:]))
+        else:
+            charges_element = soup.find('caption', text='Charges')
 
             return charges
+        
+    def location(self, soup):
+
+        try:
+            record = {
+                "Location": soup.find('th', text='Location:').find_parent('tr').find('td').text.strip()
+            }
+
+            return record
+        except:
+            None
