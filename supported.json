@@ -55,7 +55,7 @@
             }
         },
         {
-            "key": "Defendent",
+            "key": "Defendant",
             "type": "maltego.Person",
             "additional_properties": {}
         },
@@ -124,7 +124,9 @@
         "District Court, N.D. Indiana Record",
         "District Court, D. New Jersey Record",
         "Chatham County, Georgia Court Record",
-        "Grand Rapids, Michigan District Court Record"
+        "Grand Rapids, Michigan District Court Record",
+        "Missouri Court Record",
+        "United States Bankruptcy Court, S.D. Mississippi Record"
     ]
 }
 

@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import json
 from modules import record_types
 
+
 # Error code handling
 def check_status(response):
 
@@ -118,6 +119,8 @@ class judy:
             "District Court, D. New Jersey Record": record_types.type_3(record, soup),
             "Chatham County, Georgia Court Record": record_types.type_4(record, soup),
             "Grand Rapids, Michigan District Court Record": record_types.type_5(record, soup),
+            "Missouri Court Record": record_types.type_3(record, soup),
+            "United States Bankruptcy Court, S.D. Mississippi Record": record_types.type_3(record, soup),
         }
 
         record = available[record["Title"]]

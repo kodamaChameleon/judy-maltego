@@ -33,11 +33,11 @@ def type_1(record, soup):
 
     defendants = soup.find_all('th', text='Defendant')
     if defendants:
-        record["Defendent"] = []
+        record["Defendant"] = []
 
         for defendant in defendants:
             name = defendant.find_next('th').text.strip()
-            record["Defendent"].append(name)
+            record["Defendant"].append(name)
 
     plaintiffs = soup.find_all('th', text='Plaintiff')
     if plaintiffs:
@@ -108,11 +108,11 @@ def type_2(record, soup):
         defendants += soup.find_all('div', text=item, class_="ptyType")
 
     if defendants:
-        record["Defendent"] = []
+        record["Defendant"] = []
 
         for defendant in defendants:
             name = defendant.parent.find('div').text.strip()
-            record["Defendent"].append(name)
+            record["Defendant"].append(name)
 
     target_strings = [' - PLAINTIFF ', ' - plaintiff ', ' - Plaintiff ']
     plaintiffs = []
@@ -168,15 +168,30 @@ def type_4(record, soup):
 
 def type_5(record, soup):
 
-    tables = soup.find_all('table')
-    for table in tables:
-        columns = len(table.find_all('td'))
-        rows = len(table.find_all('tr'))
-        
-        if rows == 2:
-            for column_index in range(columns):
-                record[table.find_all('tr')[0].find_all('td')[column_index]] = table.find_all('tr')[1].find_all('td')[column_index]
+    target_tables = soup.find_all('table')
+    header_conversion = {
+        "Case Number": "Case_Number",
+        "Date": "Date_Filed",
+        "Date Filed": "Date_Filed",
+        "Offense Date": "Date",
+        "Mailing address": "Address",
+        "Attorney Phone": "Phone",
+        "Offense Description": "Charges",
+        "Case": "Cross_Reference",
+        "Judge/Magistrate": "Judge",
+    }
+    for table in target_tables:
+        try:
+            headers = [header.get_text().strip() for header in table.select('tr:nth-of-type(1) > td')]
+            converted_headers = [header_conversion[header] if header in header_conversion else header for header in headers]
+            data = [cell.get_text().strip() for cell in table.select('tr:nth-of-type(2) > td')]
+            if len(data) == len(converted_headers):
+                record.update(dict(zip(converted_headers, data)))
 
-        print("hello")
+            # if header in header_conversion:
+            #     header = header_conversion[header]
+
+        except:
+            continue
 
     return record

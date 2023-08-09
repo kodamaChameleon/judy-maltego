@@ -7,7 +7,7 @@ import json
 
 # Error Handling
 def add_entity(key, entity_type, value, response, additional_properties=None):
-    link_lables = ["Defendent", "Plaintiff", "Judge", "Date", "Date_Filed", "DOB"]
+    link_lables = ["Defendant", "Plaintiff", "Judge", "Date", "Date_Filed", "DOB"]
     try:
         if isinstance(value, list):
             for item in value:
