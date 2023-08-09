@@ -8,7 +8,7 @@ Version: 1.0.0-beta
 
 ## 💎 About
 
-Retreives search results from [judyrecords](https://judyrecords.com). For more information about the terms of judyrecords, see [terms](https://judyrecords.com/terms).
+Retreives search results from [judyrecords](https://judyrecords.com) and extract data. For more information about the terms of judyrecords, see [terms](https://judyrecords.com/terms).
 
 Please use this tool ethically by respecting people's privacy and only collecting intelligence where explicit permission has been granted or otherwise legally qualified to do so. We are not responsible for any illegal use.
 
@@ -52,7 +52,7 @@ Judyrecords advertises millions of records making it virtually impossible to cov
 - Missouri Court Record
 - United States Bankruptcy Court, S.D. Mississippi Record
 
-Don't see a record you are interested in? Create an issue for us with the name of the record type and an example record you want added (i.e. `https://judyrecords.com/record/<record number here>`)
+Don't see a record you are interested in? Create an issue for us with the name of the record type and an example record you want added (i.e. `https://judyrecords.com/record/<record number here>`). Better yet, you can contribute by forking the repository, testing changes, and making pull requests for yourself. Sigh... wouldn't it be nice if they had an API!
    
 ## 📜 License
 <img src="https://creativecommons.org/images/deed/FreeCulturalWorks_seal_x2.jpg" height="100px">
