@@ -2,7 +2,7 @@
 
 ### Retrieve Judyrecord.com Results in Maltego
 
-[![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
 Version: 1.0.0-beta
 
@@ -35,8 +35,24 @@ Import Judy-Maltego.mtz and entities from the entities folder into Maltego to be
 | Name               | Description                                                       | Input              |
 |--------------------|-------------------------------------------------------------------|--------------------|
 | searchName         | Returns search results from www.judyrecords.com using name        | maltego.Person     |
+| searchPhrase       | Returns search results from www.judyrecords.com using a phrase    | maltego.Phrase     |
 | toCaseDetails      | Extracts case details from judyrecords.com using url              | maltego.judyRecord |
 
+**Supported Records**  
+Judyrecords advertises millions of records making it virtually impossible to cover every record type. If a record type is not supported, results will still come back using searchName or searchPhrase; however, toCaseDetails will return "Unsupported Record Type."  
+- Las Vegas, Nevada Justice Court Record
+- Clark County, Nevada Court Record
+- North Las Vegas, Nevada Municipal Court Record
+- District Court, E.D. Pennsylvania Record
+- District Court, N.D. Illinois Record
+- District Court, N.D. Indiana Record
+- District Court, D. New Jersey Record
+- Chatham County, Georgia Court Record
+- Grand Rapids, Michigan District Court Record
+- Missouri Court Record
+- United States Bankruptcy Court, S.D. Mississippi Record
+
+Don't see a record you are interested in? Create an issue for us with the name of the record type and an example record you want added (i.e. `https://judyrecords.com/record/<record number here>`)
    
 ## 📜 License
 <img src="https://creativecommons.org/images/deed/FreeCulturalWorks_seal_x2.jpg" height="100px">
