@@ -11,6 +11,15 @@ def normalize(key_transforms, record):
     
     return new_record
 
+# Create new list if list does not exist
+def check_key(record, key, value):
+    if key in record:
+        record[key].append(value)
+    else:
+        record[key] = [value]
+
+    return record
+
 # Handle records using generic format names
 def type_1(record, soup):
 
@@ -21,7 +30,7 @@ def type_1(record, soup):
     except:
         pass
 
-    fields_to_update = {
+    fields = {
         "Case Type:",
         "Subtype:",
         "Date Filed:",
@@ -29,7 +38,7 @@ def type_1(record, soup):
         "Cross-Reference Case Number:"
     }
     
-    for field_name in fields_to_update:
+    for field_name in fields:
         try:
             value = record_page.find('th', text=field_name).find_parent('tr').find('td').text.strip()
             record.update({field_name: [value]})
@@ -43,11 +52,7 @@ def type_1(record, soup):
             th_elements = tr_element.find_all('th')
             try:
                 header, value = [th_elements[n].get_text().strip() for n in range(2)]
-                if header:
-                    if value in record:
-                        record[header].append(value)
-                    else:
-                        record[header] = [value]
+                record = check_key(record, header, value)
             except:
                 pass
 
@@ -73,10 +78,7 @@ def type_1(record, soup):
             current_row = rows[i]
             current_header = headers[effective_header_index]
 
-            if current_header in record:
-                record[current_header].append(current_row)
-            else:
-                record[current_header] = [current_row]
+            record = check_key(record, current_header, current_row)
 
     key_transforms = {
         "Case Type:": "Case Type",
@@ -91,56 +93,53 @@ def type_1(record, soup):
 
 def type_2(record, soup):
 
+    record_page = soup.find('article', class_="record page")
+
+    field_extraction = [
+        ("Case Type:", ""),
+        ("Case Status:", ""),
+        ("Case Judge:", ""),
+        ("Offense Date", ""),
+        ("DOB", "ptyPersInfo"),
+        ("Address", "ptyContactInfo"),
+        ("Phone", "ptyContactInfo")
+    ]
+
+    for key, class_id in field_extraction:
+        try:
+            key_elements = record_page.find('li', text=key)
+            for element in key_elements:
+                if class_id:
+                    value = element.find_next('li', class_=class_id).text.strip()
+                    record = check_key(record, key, value)
+                else:
+                    value = element.find_next('li').text.strip()
+                    record = check_key(record, key, value)
+        except:
+            pass
+
+    # Find parties involved
+    party_info = record_page.find(id='ptyInfo')
+    member_type = [text.get_text().strip() for text in party_info.find_all('div', class_="ptyType")]
+    member_name = [text.get_text().strip() for text in party_info.find_all('div', class_="ptyInfoLabel")]
+    for i in range(len(member_type)):
+        record = check_key(record, member_type[i], member_name[i])
+
+    # Find charges
     try:
-        record["Case_Type"] = soup.find('li', text='Case Type:').find_next('li').text.strip()
-    except AttributeError:
-        record["Case_Type"] = ""
+        record["Charges"] = [text.get_text().strip() for text in record_page.find(id="chgInfo").find_all('div', class_="chrg")]
+    except:
+        pass
 
-    try:
-        record["Judge"] = soup.find('li', text='Case Judge:').find_next('li').text.strip()
-    except AttributeError:
-        record["Judge"] = ""
+    key_transforms = {
+        "Case Type:": "Case Type",
+        "Case Status:": "Case Status",
+        "Case Judge:": "Judge",
+        "- DEFENDANT": "Defendant",
+        "- Defendant": "Defendant"
+    }
 
-    try:
-        record["DOB"] = soup.find('li', text='DOB').find_next('li', class_="ptyPersInfo").text.strip()
-    except AttributeError:
-        record["DOB"] = ""
-
-    try:
-        record["Address"] = soup.find('li', text='Address').find_next('li', class_="ptyContactInfo").text.strip()
-    except AttributeError:
-        record["Address"] = ""
-
-    try:
-        record["Phone"] = soup.find('li', text='Phone').find_next('li', class_="ptyContactInfo").text.strip()
-    except AttributeError:
-        record["Phone"] = ""
-
-    target_strings = [' - DEFENDANT ', ' - defendant ', ' - Defendant ']
-    defendants = []
-    for item in target_strings:
-        defendants += soup.find_all('div', text=item, class_="ptyType")
-
-    if defendants:
-        record["Defendant"] = []
-
-        for defendant in defendants:
-            name = defendant.parent.find('div').text.strip()
-            record["Defendant"].append(name)
-
-    target_strings = [' - PLAINTIFF ', ' - plaintiff ', ' - Plaintiff ']
-    plaintiffs = []
-    for item in target_strings:
-        plaintiffs += soup.find_all('div', text=item, class_="ptyType")
-
-    if plaintiffs:
-        record["Plaintiff"] = []
-
-        for plaintiff in plaintiffs:
-            name = plaintiff.parent.find('div').text.strip()
-            record["Plaintiff"].append(name)
-
-    return record
+    return normalize(key_transforms, record)
 
 def type_3(record, soup):
 

@@ -39,6 +39,14 @@
             }
         },
         {
+            "key": "Case Status",
+            "type": "maltego.Phrase",
+            "label_link": false,
+            "additional_properties": {
+                "identifierType": "Citation Number"
+            }
+        },
+        {
             "key": "Level",
             "type": "maltego.hashtag",
             "label_link": false,
@@ -136,7 +144,8 @@
     ],
     "Record Types": {
         "Las Vegas, Nevada Justice Court Record": 1,
-        "Clark County, Nevada Court Record": 1
+        "Clark County, Nevada Court Record": 1,
+        "North Las Vegas, Nevada Municipal Court Record": 2
     }
 }
 
