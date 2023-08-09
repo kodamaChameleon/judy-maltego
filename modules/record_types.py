@@ -144,7 +144,7 @@ def type_2(record, soup):
 def type_3(record, soup):
 
     try:
-        record["Reference Link"] = soup.find('div', class_="accessInstructions").find('a')['href']
+        record["Reference Link"] = [soup.find('div', class_="accessInstructions").find('a')['href']]
     except:
         None
 
