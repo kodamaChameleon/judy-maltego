@@ -21,8 +21,8 @@ Please use this tool ethically by respecting people's privacy and only collectin
    
 ### Installation
 ```
-   git clone https://github.com/kodamaChameleon/twilio-maltego.git
-   cd twilio-maltego
+   git clone https://github.com/kodamaChameleon/judy-maltego.git
+   cd judy-maltego
    python3 setup.py
 ```
 
