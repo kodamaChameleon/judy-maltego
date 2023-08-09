@@ -127,7 +127,7 @@
             "additional_properties": {}
         },
         {
-            "key": "Reference_Link",
+            "key": "Reference Link",
             "type": "maltego.Website",
             "label_link": false,
             "additional_properties": {
@@ -145,7 +145,13 @@
     "Record Types": {
         "Las Vegas, Nevada Justice Court Record": 1,
         "Clark County, Nevada Court Record": 1,
-        "North Las Vegas, Nevada Municipal Court Record": 2
+        "North Las Vegas, Nevada Municipal Court Record": 2,
+        "District Court, E.D. Pennsylvania Record": 3,
+        "District Court, N.D. Illinois Record": 3,
+        "District Court, N.D. Indiana Record": 3,
+        "District Court, D. New Jersey Record": 3,
+        "United States Bankruptcy Court, S.D. Mississippi Record": 3,
+        "Missouri Court Record": 3
     }
 }
 
