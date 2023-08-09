@@ -31,7 +31,7 @@ class searchPhrase(DiscoverableTransform):
             # Convert records to entities
             for record in records:
                 judyrecord = response.addEntity("maltego.judyRecord")
-                judyrecord.addProperty("title", value = record["Title"])
+                judyrecord.addProperty("Record", value = record["Record"])
                 judyrecord.addProperty("properties.url", value = record["url"])
                 judyrecord.addProperty("snippet", value = record["snippet"])
 

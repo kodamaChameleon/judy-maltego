@@ -46,7 +46,7 @@ class toCaseDetails(DiscoverableTransform):
             # Retrieve name from entity
             record = {
                 "url": request.Value,
-                "Title": request.getProperty("title")
+                "Record": request.getProperty("Record")
             }
 
             # From list of entity types, convert scraped data to entities
@@ -54,11 +54,11 @@ class toCaseDetails(DiscoverableTransform):
                 supported = json.load(json_file)
 
             # Check if supported
-            if record["Title"] in supported["Record Types"]:
+            if record["Record"] in supported["Record Types"]:
 
                 # Conduct search from judyrecords
                 judy = lookup.judy()
-                record["Type"] = supported["Record Types"][record["Title"]]
+                record["Type"] = supported["Record Types"][record["Record"]]
                 record = judy.caseDetails(record)
                 
 

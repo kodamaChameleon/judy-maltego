@@ -71,7 +71,7 @@ class judy:
             a_tag = item.find('a')
 
             record = {
-                "Title": a_tag.get_text(),
+                "Record": a_tag.get_text(),
                 "url": "https://judyrecords.com" + a_tag['href'],
                 "snippet": concatenated_snippet
             }
