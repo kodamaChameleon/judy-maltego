@@ -152,32 +152,40 @@ def type_3(record, soup):
 
 def type_4(record, soup):
 
+    record_page = soup.find('article', class_="record page")
+
     target_classes = ['col-md-12', 'col-md-4', 'col-md-8']
+
     key_phrase = {
-        "Case Number": "Case_Number",
-        "File Date": "Date_Filed",
-        "Case Type": "Case_Type",
+        "Case Number",
+        "File Date",
+        "Case Type",
+        "Plaintiff/Petitioner",
+        "Defendant/Respondant",
+        "Judicial Officer"
+    }
+    
+    for class_ in target_classes:
+        elements = record_page.find_all('div', class_ = class_)
+        
+        for element in elements:
+            text = element.get_text().strip()
+
+            for key in key_phrase:
+                if key in text:
+                    text = text.replace(key, "").strip()
+                    record = check_key(record, key, text)
+    
+    key_transforms = {
+        "Case Number": "Case Number",
+        "File Date": "Date Filed",
+        "Case Type": "Case Type",
         "Plaintiff/Petitioner": "Plaintiff",
         "Defendant/Respondant": "Defendant",
         "Judicial Officer": "Judge"
     }
 
-    for class_ in target_classes:
-        elements = soup.find_all('div', class_ = class_)
-        for element in elements:
-            text = element.get_text().strip()
-            if text:
-                for key, value in key_phrase.items():
-                    if key in text and value in ["Plaintiff", "Defendant"]:
-                        if value in record:
-                            record[value].append(text.replace(key, "").strip())
-                        else:
-                            record[value] = [text.replace(key, "").strip()]
-
-                    elif key in text:
-                        record[value] = text.replace(key, "").strip()
-
-    return record
+    return normalize(key_transforms, record)
 
 def type_5(record, soup):
 
