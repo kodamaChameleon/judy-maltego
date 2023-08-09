@@ -110,19 +110,12 @@ class judy:
 
         # Select the format for the appropriate record type
         available = {
-            "Las Vegas, Nevada Justice Court Record": record_types.type_1(record, soup),
-            "Clark County, Nevada Court Record": record_types.type_1(record, soup),
-            "North Las Vegas, Nevada Municipal Court Record": record_types.type_2(record, soup),
-            "District Court, E.D. Pennsylvania Record": record_types.type_3(record, soup),
-            "District Court, N.D. Illinois Record": record_types.type_3(record, soup),
-            "District Court, N.D. Indiana Record": record_types.type_3(record, soup),
-            "District Court, D. New Jersey Record": record_types.type_3(record, soup),
-            "Chatham County, Georgia Court Record": record_types.type_4(record, soup),
-            "Grand Rapids, Michigan District Court Record": record_types.type_5(record, soup),
-            "Missouri Court Record": record_types.type_3(record, soup),
-            "United States Bankruptcy Court, S.D. Mississippi Record": record_types.type_3(record, soup),
+            1: record_types.type_1(record, soup),
+            2: record_types.type_2(record, soup),
+            3: record_types.type_3(record, soup),
+            4: record_types.type_4(record, soup),
         }
 
-        record = available[record["Title"]]
+        record = available[record["Type"]]
 
         return record

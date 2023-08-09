@@ -53,12 +53,14 @@ class toCaseDetails(DiscoverableTransform):
             with open("supported.json", "r") as json_file:
                 supported = json.load(json_file)
 
-
+            # Check if supported
             if record["Title"] in supported["Record Types"]:
 
                 # Conduct search from judyrecords
                 judy = lookup.judy()
+                record["Type"] = supported["Record Types"][record["Title"]]
                 record = judy.caseDetails(record)
+                
 
                 for entity in supported["entities"]:
                     if entity["key"] in record and record[entity["key"]]:

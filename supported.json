@@ -115,18 +115,18 @@
             "additional_properties": {}
         }
     ],
-    "Record Types": [
-        "Las Vegas, Nevada Justice Court Record",
-        "Clark County, Nevada Court Record",
-        "North Las Vegas, Nevada Municipal Court Record",
-        "District Court, E.D. Pennsylvania Record",
-        "District Court, N.D. Illinois Record",
-        "District Court, N.D. Indiana Record",
-        "District Court, D. New Jersey Record",
-        "Chatham County, Georgia Court Record",
-        "Grand Rapids, Michigan District Court Record",
-        "Missouri Court Record",
-        "United States Bankruptcy Court, S.D. Mississippi Record"
-    ]
+    "Record Types": {
+        "Las Vegas, Nevada Justice Court Record": 1,
+        "Clark County, Nevada Court Record": 1,
+        "North Las Vegas, Nevada Municipal Court Record": 2,
+        "District Court, E.D. Pennsylvania Record": 3,
+        "District Court, N.D. Illinois Record": 3,
+        "District Court, N.D. Indiana Record": 3,
+        "District Court, D. New Jersey Record": 3,
+        "Chatham County, Georgia Court Record": 4,
+        "Grand Rapids, Michigan District Court Record": 5,
+        "Missouri Court Record": 3,
+        "United States Bankruptcy Court, S.D. Mississippi Record": 3
+    }
 }
 
