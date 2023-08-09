@@ -6,26 +6,17 @@ from modules import lookup
 import json
 
 # Error Handling
-def add_entity(key, entity_type, value, response, additional_properties=None):
-    link_lables = ["Defendant", "Plaintiff", "Judge", "Date", "Date_Filed", "DOB"]
+def add_entity(entity_meta, value: list, response):
     try:
-        if isinstance(value, list):
-            for item in value:
-                entity = response.addEntity(entity_type, value=item)
-                if additional_properties:
-                    for prop_key, prop_value in additional_properties.items():
-                        entity.addProperty(prop_key, value=prop_value)
-                if key in link_lables:
-                    entity.setLinkLabel(key)
-        else:
-            entity = response.addEntity(entity_type, value=value)
-            if additional_properties:
-                for prop_key, prop_value in additional_properties.items():
-                    entity.addProperty(prop_key, value=prop_value)
-            if key in link_lables:
-                entity.setLinkLabel(key)
-    except KeyError as e:
-        response.addUIMessage("Conversion to {} entity failed: {}".format(entity_type, str(e)))
+        for item in value:
+            new_entity = response.addEntity(entity_meta["type"], value=item)
+            if entity_meta["additional_properties"]:
+                for prop_key, prop_value in entity_meta["additional_properties"].items():
+                    new_entity.addProperty(prop_key, value=prop_value)
+            if entity_meta["label_link"]:
+                new_entity.setLinkLabel(entity_meta["key"])
+    except Exception as e:
+        response.addUIMessage("Conversion to {} entity failed: {}".format(entity_meta["type"], str(e)))
 
 
 @registry.register_transform(
@@ -64,7 +55,7 @@ class toCaseDetails(DiscoverableTransform):
 
                 for entity in supported["entities"]:
                     if entity["key"] in record and record[entity["key"]]:
-                        add_entity(entity["key"], entity["type"], record[entity["key"]], response, entity["additional_properties"])
+                        add_entity(entity, record[entity["key"]], response)
             
             else:
                 response.addEntity("maltego.Phrase", value = "Unsupported Record Type")

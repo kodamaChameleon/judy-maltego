@@ -1,8 +1,9 @@
 {
     "entities": [
         {
-            "key": "Case_Number",
+            "key": "Case Number",
             "type": "maltego.UniqueIdentifier",
+            "label_link": false,
             "additional_properties": {
                 "identifierType": "Case Number"
             }
@@ -10,18 +11,21 @@
         {
             "key": "Charges",
             "type": "maltego.Phrase",
+            "label_link": false,
             "additional_properties": {}
         },
         {
             "key": "Statute",
             "type": "maltego.UniqueIdentifier",
+            "label_link": false,
             "additional_properties": {
                 "identifierType": "Statute"
             }
         },
         {
-            "key": "Cross_Reference",
+            "key": "Cross Reference",
             "type": "maltego.UniqueIdentifier",
+            "label_link": false,
             "additional_properties": {
                 "identifierType": "Cross-Reference Case Number"
             }
@@ -29,6 +33,7 @@
         {
             "key": "Citation",
             "type": "maltego.UniqueIdentifier",
+            "label_link": false,
             "additional_properties": {
                 "identifierType": "Citation Number"
             }
@@ -36,13 +41,15 @@
         {
             "key": "Level",
             "type": "maltego.hashtag",
+            "label_link": false,
             "additional_properties": {
                 "identifierType": "Level"
             }
         },
         {
-            "key": "Case_Type",
+            "key": "Case Type",
             "type": "maltego.hashtag",
+            "label_link": false,
             "additional_properties": {
                 "identifierType": "Case Type"
             }
@@ -50,6 +57,7 @@
         {
             "key": "Subtype",
             "type": "maltego.hashtag",
+            "label_link": false,
             "additional_properties": {
                 "identifierType": "Subtype"
             }
@@ -57,16 +65,19 @@
         {
             "key": "Defendant",
             "type": "maltego.Person",
+            "label_link": true,
             "additional_properties": {}
         },
         {
             "key": "Plaintiff",
             "type": "maltego.Person",
+            "label_link": true,
             "additional_properties": {}
         },
         {
             "key": "Other",
             "type": "maltego.Person",
+            "label_link": false,
             "additional_properties": {
                 "identifierType": "Other"
             }
@@ -74,59 +85,58 @@
         {
             "key": "Judge",
             "type": "maltego.Person",
+            "label_link": true,
             "additional_properties": {}
         },
         {
-            "key": "Date",
+            "key": "Offense Date",
             "type": "maltego.DateTime",
+            "label_link": true,
             "additional_properties": {}
         },
         {
             "key": "DOB",
             "type": "maltego.DateTime",
+            "label_link": true,
             "additional_properties": {}
         },
         {
             "key": "Phone",
             "type": "maltego.PhoneNumber",
+            "label_link": false,
             "additional_properties": {}
         },
         {
             "key": "Location",
             "type": "maltego.Location",
+            "label_link": false,
             "additional_properties": {}
         },
         {
             "key": "Address",
             "type": "maltego.Location",
+            "label_link": false,
             "additional_properties": {}
         },
         {
             "key": "Reference_Link",
             "type": "maltego.Website",
+            "label_link": false,
             "additional_properties": {
                 "website.ssl-enabled": "true",
                 "ports": 443
             }
         },
         {
-            "key": "Date_Filed",
+            "key": "Date Filed",
             "type": "maltego.DateTime",
+            "label_link": true,
             "additional_properties": {}
         }
     ],
     "Record Types": {
         "Las Vegas, Nevada Justice Court Record": 1,
-        "Clark County, Nevada Court Record": 1,
-        "North Las Vegas, Nevada Municipal Court Record": 2,
-        "District Court, E.D. Pennsylvania Record": 3,
-        "District Court, N.D. Illinois Record": 3,
-        "District Court, N.D. Indiana Record": 3,
-        "District Court, D. New Jersey Record": 3,
-        "Chatham County, Georgia Court Record": 4,
-        "Grand Rapids, Michigan District Court Record": 5,
-        "Missouri Court Record": 3,
-        "United States Bankruptcy Court, S.D. Mississippi Record": 3
+        "Clark County, Nevada Court Record": 1
     }
 }
 
