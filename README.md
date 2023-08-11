@@ -41,35 +41,7 @@ Import Judy-Maltego.mtz and entities from the entities folder into Maltego to be
 *Note*: The community edition (CE) of Maltego limits the total entities that can be returned during a single transform to 12 which is well under what many searchName/searchPhrase results will return. The transform can be run additional times until no more results are returned.
 
 **Supported Records**  
-Judyrecords advertises millions of records making it virtually impossible to cover every record type. If a record type is not supported, results will still come back using searchName or searchPhrase; however, toCaseDetails will return "Unsupported Record Type."  
-- Alameda County, California Court Record
-- Calaveras County, California Court Record
-- Chatham County, Georgia Court Record
-- Clark County, Nevada Court Record
-- District Court, D. New Jersey Record
-- District Court, E.D. Pennsylvania Record
-- District Court, N.D. Illinois Record
-- District Court, N.D. Indiana Record
-- Fresno County, California Court Record
-- Gwinnett County, Georgia Court Record
-- Kerr County, Texas Court Record
-- Las Vegas, Nevada Justice Court Record
-- Merced County, California Court Record
-- Missouri Court Record
-- Napa County, California Court Record
-- North Las Vegas, Nevada Municipal Court Record
-- Oregon Court Record
-- San Diego County, California Court Record
-- San Mateo County, California Court Record
-- Santa Barbara County, California Court Record
-- Santa Clara County, California Court Record
-- Santa Cruz County, California Court Record
-- Shelby County, Tennessee Criminal Court Record
-- Stanislaus County, California Court Record
-- United States Bankruptcy Court, S.D. Mississippi Record
-- Yolo County, California Court Record
-
-Don't see a record you are interested in? Create an issue for us with the name of the record type and an example record you want added (i.e. `https://judyrecords.com/record/<record number here>`). Better yet, you can contribute by forking the repository, testing changes, and making pull requests for yourself. Sigh... wouldn't it be nice if they had an API!
+Supported records are located [here]("data/supported_records.json"). If an unsupported record is discovered, judy-maltego will first attempt to fingerprint the record to see if it matches an already known format type. If that fails, results will still come back using searchName or searchPhrase; however, toCaseDetails will return "Unsupported Record Type." Don't see a record you are interested in? Create an issue for us with the name of the record type and an example record you want added (i.e. `https://judyrecords.com/record/<record number here>`). Better yet, you can contribute by forking the repository, testing changes, and making pull requests for yourself. Sigh... wouldn't it be nice if they had an API!
    
 ## 📜 License
 <img src="https://creativecommons.org/images/deed/FreeCulturalWorks_seal_x2.jpg" height="100px">
