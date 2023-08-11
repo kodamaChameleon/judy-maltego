@@ -8,7 +8,7 @@ Version: 1.0.0-beta
 
 ## 💎 About
 
-Retreives search results from [judyrecords](https://judyrecords.com) and extract data. For more information about the terms of judyrecords, see [terms](https://judyrecords.com/terms).
+Retreives search results from [judyrecords](https://judyrecords.com) and extract data. Due to the extreme variance in data formatting of millions of records, it is virtually impossible to guarantee all critical data points are extracted. This is why we recommend using this tool as a supplement to and not replacement for manually reviewing results of a judyrecords search. For more information about the terms of judyrecords, see [terms](https://judyrecords.com/terms).
 
 Please use this tool ethically by respecting people's privacy and only collecting intelligence where explicit permission has been granted or otherwise legally qualified to do so. We are not responsible for any illegal use.
 
@@ -47,10 +47,22 @@ Judyrecords advertises millions of records making it virtually impossible to cov
 - District Court, N.D. Illinois Record
 - District Court, N.D. Indiana Record
 - District Court, D. New Jersey Record
-- Chatham County, Georgia Court Record
-- Grand Rapids, Michigan District Court Record
-- Missouri Court Record
 - United States Bankruptcy Court, S.D. Mississippi Record
+- Missouri Court Record
+- Chatham County, Georgia Court Record
+- Oregon Court Record
+- Santa Cruz County, California Court Record
+- Alameda County, California Court Record
+- San Mateo County, California Court Record
+- Stanislaus County, California Court Record
+- Calaveras County, California Court Record
+- San Diego County, California Court Record
+- Napa County, California Court Record
+- Santa Barbara County, California Court Record
+- Fresno County, California Court Record
+- Merced County, California Court Record
+- Yolo County, California Court Record
+- Kerr County, Texas Court Record
 
 Don't see a record you are interested in? Create an issue for us with the name of the record type and an example record you want added (i.e. `https://judyrecords.com/record/<record number here>`). Better yet, you can contribute by forking the repository, testing changes, and making pull requests for yourself. Sigh... wouldn't it be nice if they had an API!
    
