@@ -38,6 +38,8 @@ Import Judy-Maltego.mtz and entities from the entities folder into Maltego to be
 | searchPhrase       | Returns search results from www.judyrecords.com using a phrase    | maltego.Phrase     |
 | toCaseDetails      | Extracts case details from judyrecords.com using url              | maltego.judyRecord |
 
+*Note*: The community edition (CE) of Maltego limits the total entities that can be returned during a single transform to 12 which is well under what many searchName/searchPhrase results will return. The transform can be run additional times until no more results are returned.
+
 **Supported Records**  
 Judyrecords advertises millions of records making it virtually impossible to cover every record type. If a record type is not supported, results will still come back using searchName or searchPhrase; however, toCaseDetails will return "Unsupported Record Type."  
 - Las Vegas, Nevada Justice Court Record
