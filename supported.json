@@ -43,7 +43,7 @@
             "type": "maltego.Phrase",
             "label_link": false,
             "additional_properties": {
-                "identifierType": "Citation Number"
+                "identifierType": "Case Status"
             }
         },
         {
@@ -152,7 +152,20 @@
         "District Court, D. New Jersey Record": 3,
         "United States Bankruptcy Court, S.D. Mississippi Record": 3,
         "Missouri Court Record": 3,
-        "Chatham County, Georgia Court Record": 4
+        "Chatham County, Georgia Court Record": 4,
+        "Oregon Court Record": 3,
+        "Santa Cruz County, California Court Record": 4,
+        "Alameda County, California Court Record": 4,
+        "San Mateo County, California Court Record": 4,
+        "Stanislaus County, California Court Record": 4,
+        "Calaveras County, California Court Record": 4,
+        "San Diego County, California Court Record": 4,
+        "Napa County, California Court Record": 4,
+        "Santa Barbara County, California Court Record": 4,
+        "Fresno County, California Court Record": 4,
+        "Merced County, California Court Record": 4,
+        "Yolo County, California Court Record": 4,
+        "Kerr County, Texas Court Record": 1
     }
 }
 

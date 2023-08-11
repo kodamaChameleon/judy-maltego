@@ -9,12 +9,13 @@ import json
 def add_entity(entity_meta, value: list, response):
     try:
         for item in value:
-            new_entity = response.addEntity(entity_meta["type"], value=item)
-            if entity_meta["additional_properties"]:
-                for prop_key, prop_value in entity_meta["additional_properties"].items():
-                    new_entity.addProperty(prop_key, value=prop_value)
-            if entity_meta["label_link"]:
-                new_entity.setLinkLabel(entity_meta["key"])
+            if item:
+                new_entity = response.addEntity(entity_meta["type"], value=item)
+                if entity_meta["additional_properties"]:
+                    for prop_key, prop_value in entity_meta["additional_properties"].items():
+                        new_entity.addProperty(prop_key, value=prop_value)
+                if entity_meta["label_link"]:
+                    new_entity.setLinkLabel(entity_meta["key"])
     except Exception as e:
         response.addUIMessage("Conversion to {} entity failed: {}".format(entity_meta["type"], str(e)))
 

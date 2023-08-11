@@ -20,6 +20,31 @@ def check_key(record, key, value):
 
     return record
 
+# Extract data from tables
+def extract_table(table, record):
+
+    headers = ['#']
+    for th_element in table.find_all('th'):
+        text = th_element.get_text().split(':')[0].strip()
+        if text:
+            headers.append(text)
+    rows = []
+    for td_element in table.find_all('td'):
+        text = td_element.get_text().strip()
+        if text:
+            rows.append(text)
+
+    for i in range(len(rows)):
+
+        # Match rows and headers
+        effective_header_index = i % len(headers)
+        current_row = rows[i]
+        current_header = headers[effective_header_index]
+
+        record = check_key(record, current_header, current_row)
+
+    return record
+
 # Handle records using generic format names
 def type_1(record, soup):
 
@@ -60,25 +85,7 @@ def type_1(record, soup):
     if charges_element:
 
         table = charges_element.find_parent('table')
-        headers = ['#']
-        for th_element in table.find_all('th'):
-            text = th_element.get_text().split(':')[0].strip()
-            if text:
-                headers.append(text)
-        rows = []
-        for td_element in table.find_all('td'):
-            text = td_element.get_text().strip()
-            if text:
-                rows.append(text)
-
-        for i in range(len(rows)):
-
-            # Match rows and headers
-            effective_header_index = i % len(headers)
-            current_row = rows[i]
-            current_header = headers[effective_header_index]
-
-            record = check_key(record, current_header, current_row)
+        record = extract_table(table, record)
 
     key_transforms = {
         "Case Type:": "Case Type",
@@ -154,6 +161,8 @@ def type_4(record, soup):
 
     record_page = soup.find('article', class_="record page")
 
+
+    # Locate items by key phrase where key and value are in same element
     target_classes = ['col-md-12', 'col-md-4', 'col-md-8']
 
     key_phrase = {
@@ -162,19 +171,34 @@ def type_4(record, soup):
         "Case Type",
         "Plaintiff/Petitioner",
         "Defendant/Respondant",
-        "Judicial Officer"
+        "Judicial Officer",
+        "Plaintiff",
+        "Defendant",
+        "DOB",
+        "Case Status",
+        "File Date",
     }
-    
-    for class_ in target_classes:
-        elements = record_page.find_all('div', class_ = class_)
-        
-        for element in elements:
-            text = element.get_text().strip()
 
-            for key in key_phrase:
-                if key in text:
-                    text = text.replace(key, "").strip()
-                    record = check_key(record, key, text)
+    for class_ in target_classes:
+        div_elements = record_page.find_all('div', class_ = class_)
+        
+        for div_element in div_elements:
+            p_elements = div_element.find_all('p')
+
+            for p_element in p_elements:
+                text = p_element.get_text().strip()
+
+                for key in key_phrase:
+                    if key in text:
+                        text = text.replace(key, "").strip()
+                        record = check_key(record, key, text)
+
+    # Extract charges table
+    try:
+        table = record_page.find(id="chargeInformationDiv").find("table")
+        record = extract_table(table, record)
+    except:
+        pass
     
     key_transforms = {
         "Case Number": "Case Number",
@@ -182,7 +206,9 @@ def type_4(record, soup):
         "Case Type": "Case Type",
         "Plaintiff/Petitioner": "Plaintiff",
         "Defendant/Respondant": "Defendant",
-        "Judicial Officer": "Judge"
+        "Judicial Officer": "Judge",
+        "Description": "Charges",
+        "Date": "Offense Date"
     }
 
     return normalize(key_transforms, record)
