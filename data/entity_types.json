@@ -88,6 +88,18 @@
         "additional_properties": {}
     },
     {
+        "key": "Respondent",
+        "type": "maltego.Person",
+        "label_link": true,
+        "additional_properties": {}
+    },
+    {
+        "key": "Petitioner",
+        "type": "maltego.Person",
+        "label_link": true,
+        "additional_properties": {}
+    },
+    {
         "key": "Other",
         "type": "maltego.Person",
         "label_link": false,

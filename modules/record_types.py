@@ -57,8 +57,8 @@ def fingerprint(soup):
 
         # Test at least 3 metrics
         if soup.find('div', class_="ssCaseDetailROA", text="Register of Actions")\
-            and soup.find('div', class_="ssCaseDetailSectionTitle", text="Party Information")\
-            and soup.find('div', class_="ssCaseDetailSectionTitle", text="Events & Orders of the Court"):
+            and soup.find('caption', text="Party Information")\
+            and soup.find('caption', text="Events & Orders of the Court"):
 
             record_type = 1
 
@@ -125,9 +125,10 @@ def type_1(record, soup):
         except:
             pass
     
-    party_element = record_page.find('caption', text='Party Information')
+    party_element = record_page.find('div', text='Party Information')
     if party_element:
         table = party_element.find_parent('table')
+
         for tr_element in table.find_all('tr'):
             th_elements = tr_element.find_all('th')
             try:
@@ -136,7 +137,7 @@ def type_1(record, soup):
             except:
                 pass
 
-    charges_element = record_page.find('caption', text='Charge Information')
+    charges_element = record_page.find('div', text='Charge Information')
     if charges_element:
 
         table = charges_element.find_parent('table')
@@ -232,6 +233,8 @@ def type_4(record, soup):
         "DOB",
         "Case Status",
         "File Date",
+        "Respondent",
+        "Petitioner"
     }
 
     for class_ in target_classes:
