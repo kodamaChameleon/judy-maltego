@@ -42,19 +42,22 @@ class toCaseDetails(DiscoverableTransform):
             }
 
             # From list of entity types, convert scraped data to entities
-            with open("supported.json", "r") as json_file:
-                supported = json.load(json_file)
+            with open("data/record_types.json", "r") as json_file:
+                record_types = json.load(json_file)
+
+            with open("data/entity_types.json", "r") as json_file:
+                entity_types = json.load(json_file)
 
             # Check if supported
-            if record["Record"] in supported["Record Types"]:
+            if record["Record"] in record_types:
 
                 # Conduct search from judyrecords
                 judy = lookup.judy()
-                record["Type"] = supported["Record Types"][record["Record"]]
+                record["Type"] = record_types[record["Record"]]
                 record = judy.caseDetails(record)
                 
 
-                for entity in supported["entities"]:
+                for entity in entity_types:
                     if entity["key"] in record and record[entity["key"]]:
                         add_entity(entity, record[entity["key"]], response)
             

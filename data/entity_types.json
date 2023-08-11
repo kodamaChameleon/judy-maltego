@@ -1,0 +1,143 @@
+[
+    {
+        "key": "Case Number",
+        "type": "maltego.UniqueIdentifier",
+        "label_link": false,
+        "additional_properties": {
+            "identifierType": "Case Number"
+        }
+    },
+    {
+        "key": "Charges",
+        "type": "maltego.Phrase",
+        "label_link": false,
+        "additional_properties": {}
+    },
+    {
+        "key": "Statute",
+        "type": "maltego.UniqueIdentifier",
+        "label_link": false,
+        "additional_properties": {
+            "identifierType": "Statute"
+        }
+    },
+    {
+        "key": "Cross Reference",
+        "type": "maltego.UniqueIdentifier",
+        "label_link": false,
+        "additional_properties": {
+            "identifierType": "Cross-Reference Case Number"
+        }
+    },
+    {
+        "key": "Citation",
+        "type": "maltego.UniqueIdentifier",
+        "label_link": false,
+        "additional_properties": {
+            "identifierType": "Citation Number"
+        }
+    },
+    {
+        "key": "Case Status",
+        "type": "maltego.Phrase",
+        "label_link": false,
+        "additional_properties": {
+            "identifierType": "Case Status"
+        }
+    },
+    {
+        "key": "Level",
+        "type": "maltego.hashtag",
+        "label_link": false,
+        "additional_properties": {
+            "identifierType": "Level"
+        }
+    },
+    {
+        "key": "Case Type",
+        "type": "maltego.hashtag",
+        "label_link": false,
+        "additional_properties": {
+            "identifierType": "Case Type"
+        }
+    },
+    {
+        "key": "Subtype",
+        "type": "maltego.hashtag",
+        "label_link": false,
+        "additional_properties": {
+            "identifierType": "Subtype"
+        }
+    },
+    {
+        "key": "Defendant",
+        "type": "maltego.Person",
+        "label_link": true,
+        "additional_properties": {}
+    },
+    {
+        "key": "Plaintiff",
+        "type": "maltego.Person",
+        "label_link": true,
+        "additional_properties": {}
+    },
+    {
+        "key": "Other",
+        "type": "maltego.Person",
+        "label_link": false,
+        "additional_properties": {
+            "identifierType": "Other"
+        }
+    },
+    {
+        "key": "Judge",
+        "type": "maltego.Person",
+        "label_link": true,
+        "additional_properties": {}
+    },
+    {
+        "key": "Offense Date",
+        "type": "maltego.DateTime",
+        "label_link": true,
+        "additional_properties": {}
+    },
+    {
+        "key": "DOB",
+        "type": "maltego.DateTime",
+        "label_link": true,
+        "additional_properties": {}
+    },
+    {
+        "key": "Phone",
+        "type": "maltego.PhoneNumber",
+        "label_link": false,
+        "additional_properties": {}
+    },
+    {
+        "key": "Location",
+        "type": "maltego.Location",
+        "label_link": false,
+        "additional_properties": {}
+    },
+    {
+        "key": "Address",
+        "type": "maltego.Location",
+        "label_link": false,
+        "additional_properties": {}
+    },
+    {
+        "key": "Reference Link",
+        "type": "maltego.Website",
+        "label_link": false,
+        "additional_properties": {
+            "website.ssl-enabled": "true",
+            "ports": 443
+        }
+    },
+    {
+        "key": "Date Filed",
+        "type": "maltego.DateTime",
+        "label_link": true,
+        "additional_properties": {}
+    }
+]
