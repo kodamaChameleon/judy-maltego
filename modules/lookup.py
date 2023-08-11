@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 from modules import record_types
+# import webbrowser ## For testing only
 
 
 # Error code handling
@@ -109,14 +110,33 @@ class judy:
         # Parse response for urls
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        # Select the format for the appropriate record type
-        available = {
-        1: record_types.type_1(record, soup) if record["Type"] == 1 else None,
-        2: record_types.type_2(record, soup) if record["Type"] == 2 else None,
-        3: record_types.type_3(record, soup) if record["Type"] == 3 else None,
-        4: record_types.type_4(record, soup) if record["Type"] == 4 else None,
-    }
+        # Classify format to be used
+        with open("data/supported_records.json", "r") as json_file:
+            supported_records = json.load(json_file)
 
-        record = available[record["Type"]]
+        # First check if it has already been classified (also works as a manual override)
+        if record["Record"] in supported_records:
+            record["Type"] = supported_records[record["Record"]]
+
+        # If not, try using the fingerprint function to assign a classification
+        else:
+            record["Type"] = record_types.fingerprint(soup)
+            if record["Type"]:
+                # webbrowser.open(record['url'])
+                record_types.update_supported(record)
+
+        # Normalize the data
+        if record["Type"]:
+            # Select the format for the appropriate record type
+            available = {
+                1: record_types.type_1(record, soup) if record["Type"] == 1 else None,
+                2: record_types.type_2(record, soup) if record["Type"] == 2 else None,
+                3: record_types.type_3(record, soup) if record["Type"] == 3 else None,
+                4: record_types.type_4(record, soup) if record["Type"] == 4 else None,
+            }
+
+            record = available[record["Type"]]
+        else:
+            record["Unsupported"] = ["Unsupported Record Type"]
 
         return record

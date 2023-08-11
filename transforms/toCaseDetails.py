@@ -41,28 +41,15 @@ class toCaseDetails(DiscoverableTransform):
                 "Record": request.getProperty("Record")
             }
 
-            # From list of entity types, convert scraped data to entities
-            with open("data/record_types.json", "r") as json_file:
-                record_types = json.load(json_file)
-
             with open("data/entity_types.json", "r") as json_file:
                 entity_types = json.load(json_file)
 
-            # Check if supported
-            if record["Record"] in record_types:
-
-                # Conduct search from judyrecords
-                judy = lookup.judy()
-                record["Type"] = record_types[record["Record"]]
-                record = judy.caseDetails(record)
-                
-
-                for entity in entity_types:
-                    if entity["key"] in record and record[entity["key"]]:
-                        add_entity(entity, record[entity["key"]], response)
+            # Conduct search from judyrecords
+            judy = lookup.judy()
+            record = judy.caseDetails(record)
             
-            else:
-                response.addEntity("maltego.Phrase", value = "Unsupported Record Type")
+            for entity in entity_types:
+                if entity["key"] in record and record[entity["key"]]:
+                    add_entity(entity, record[entity["key"]], response)
             
-
         trio.run(main) # running our async code in a non-async code

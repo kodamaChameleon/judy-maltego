@@ -1,3 +1,5 @@
+import json
+
 # Normalize record
 def normalize(key_transforms, record):
     new_record = {}  # Create a new dictionary to store the modified record
@@ -44,6 +46,59 @@ def extract_table(table, record):
         record = check_key(record, current_header, current_row)
 
     return record
+
+# Classify record type by fingerprint
+def fingerprint(soup):
+
+    # Initialize variable
+    record_type = None
+
+    try:
+
+        # Test at least 3 metrics
+        if soup.find('div', class_="ssCaseDetailROA", text="Register of Actions")\
+            and soup.find('div', class_="ssCaseDetailSectionTitle", text="Party Information")\
+            and soup.find('div', class_="ssCaseDetailSectionTitle", text="Events & Orders of the Court"):
+
+            record_type = 1
+
+        elif soup.find(id="titleBar")\
+            and soup.find(id="caseHeader")\
+            and soup.find(id="CaseDetailPanelTabSection"):
+
+            record_type = 2
+
+        elif soup.find('div', class_="pageCopy")\
+            and soup.find('div', class_="accessInstructions")\
+            and soup.find('p', class_="toAccessThisRecordDirectly"):
+
+            record_type = 3
+
+        elif soup.find(id="divCaseInformation_header")\
+            and (soup.find('div', class_="col-md-4") or soup.find('div', class_="col-md-8") or soup.find('div', class_="col-md-12"))\
+            and soup.find(id="divCaseInformation_body"):
+
+            record_type = 4
+
+    except:
+        pass
+
+    return record_type
+
+# Update supported_records json
+def update_supported(record):
+
+    json_file_path = "data/supported_records.json"
+    with open(json_file_path, 'r') as f:
+        record_types = json.load(f)
+
+    if isinstance(record_types, dict):
+        record_types[record["Record"]] = record["Type"]
+        sorted_unique_record_types = dict(sorted(record_types.items()))
+
+        with open(json_file_path, 'w') as f:
+            record_types = sorted_unique_record_types
+            json.dump(record_types, f, indent=4)
 
 # Handle records using generic format names
 def type_1(record, soup):

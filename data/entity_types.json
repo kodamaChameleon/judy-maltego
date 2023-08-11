@@ -14,6 +14,12 @@
         "additional_properties": {}
     },
     {
+        "key": "Unsupported",
+        "type": "maltego.Phrase",
+        "label_link": false,
+        "additional_properties": {}
+    },
+    {
         "key": "Statute",
         "type": "maltego.UniqueIdentifier",
         "label_link": false,

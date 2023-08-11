@@ -7,20 +7,14 @@ These methods are used to test record collection, data scraping, and sort suppor
 from modules import lookup
 import json
 
+
 # Test record scrapes
 def scrape_record(record):
 
-    # From list of entity types, convert scraped data to entities
-    with open("data/record_types.json", "r") as json_file:
-        record_types = json.load(json_file)
-
-    # Check if supported
-    if record["Record"] in record_types:
-
-        # Conduct search from judyrecords
-        judy = lookup.judy()
-        record["Type"] = record_types[record["Record"]]
-        record = judy.caseDetails(record)
+    judy = lookup.judy()
+    record = judy.caseDetails(record)
+    
+    return record
 
 
  # Test search functions
@@ -29,6 +23,8 @@ def search_records(search_terms, type_):
     judy.addSearchJob(search_terms, "name")
     status = judy.checkJobStatus()["status"]
     records = judy.aggregateResults(status)
+
+    return records
 
 # Sort supported record types
 def sort_and_remove_duplicates(json_file_path):
@@ -51,3 +47,8 @@ def sort_and_remove_duplicates(json_file_path):
 # search_records("Al Capone", "name")
 # scrape_record({"url":"https://www.judyrecords.com/record/cyn1an4bd3", "Record": "Gonzales County, Texas Jail Record"})
 # sort_and_remove_duplicates("data/record_types.json")
+
+with open("test_cases.json", "r") as json_file:
+    test_cases = json.load(json_file)
+for case in test_cases:
+    scrape_record(case)
