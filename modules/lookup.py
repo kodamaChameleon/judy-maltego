@@ -83,6 +83,7 @@ class judy:
         if page_urls:
             last_div = page_urls[-1]
             last_page_value = last_div['data-ref-page']
+            results["last_page"] = last_page_value
 
         return results
     
