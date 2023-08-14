@@ -15,10 +15,11 @@ def normalize(key_transforms, record):
 
 # Create new list if list does not exist
 def check_key(record, key, value):
-    if key in record:
-        record[key].append(value)
-    else:
-        record[key] = [value]
+    if value:
+        if key in record:
+            record[key].append(value)
+        else:
+            record[key] = [value]
 
     return record
 
@@ -26,15 +27,30 @@ def check_key(record, key, value):
 def extract_table(table, record):
 
     headers = ['#']
-    for th_element in table.find_all('th'):
-        text = th_element.get_text().split(':')[0].strip()
-        if text:
-            headers.append(text)
     rows = []
-    for td_element in table.find_all('td'):
-        text = td_element.get_text().strip()
-        if text:
-            rows.append(text)
+    if table.find_all('th'):
+        for th_element in table.find_all('th'):
+            text = th_element.get_text().split(':')[0].strip()
+            if text:
+                headers.append(text)
+        
+        for td_element in table.find_all('td'):
+            text = td_element.get_text().strip()
+            if text:
+                rows.append(text)
+    else:
+        row_elements = table.find_all('tr')
+        for th_element in row_elements[0].find_all('td'):
+            text = th_element.get_text().split(':')[0].strip()
+            if text:
+                headers.append(text)
+        
+        for row in row_elements[1:]:
+            for td_element in row.find_all('td'):
+                text = td_element.get_text().strip()
+                if text:
+                    rows.append(text)
+
 
     for i in range(len(rows)):
 
@@ -56,7 +72,8 @@ def fingerprint(soup):
     try:
 
         # Test at least 3 metrics
-        if soup.find('div', class_="ssCaseDetailROA", text="Register of Actions")\
+        if (soup.find('div', class_="ssCaseDetailROA", text="Register of Actions")\
+            or soup.find('div', class_="ssCaseDetailROA", text="Chronological Case Summary"))\
             and soup.find('caption', text="Party Information")\
             and soup.find('caption', text="Events & Orders of the Court"):
 
@@ -79,6 +96,20 @@ def fingerprint(soup):
             and soup.find(id="divCaseInformation_body"):
 
             record_type = 4
+
+        elif soup.find('td', text="Trial Court Case ID")\
+            and soup.find('td', text="Speedy Trial")\
+            and soup.find('td', text="Microfilm Ref")\
+            and len(soup.find_all('table')) == 2:
+
+            record_type = 5
+
+        elif (soup.find('div', class_="ssCaseDetailROA", text="Register of Actions")\
+            or soup.find('div', class_="ssCaseDetailROA", text="Chronological Case Summary"))\
+            and soup.find('div', class_="ssCaseDetailSectionTitle", text="Party Information")\
+            and soup.find('div', class_="ssCaseDetailSectionTitle",  text="Events & Orders of the Court"):
+
+            record_type = 6
 
     except:
         pass
@@ -271,32 +302,100 @@ def type_4(record, soup):
 
     return normalize(key_transforms, record)
 
+
 def type_5(record, soup):
 
-    target_tables = soup.find_all('table')
-    header_conversion = {
-        "Case Number": "Case_Number",
-        "Date": "Date_Filed",
-        "Date Filed": "Date_Filed",
-        "Offense Date": "Date",
-        "Mailing address": "Address",
-        "Attorney Phone": "Phone",
-        "Offense Description": "Charges",
-        "Case": "Cross_Reference",
-        "Judge/Magistrate": "Judge",
+    table_elements = soup.find('article', class_="record page").find_all("table")
+    
+    # Get Case details
+    rows = table_elements[0].find_all('tr')
+    headers = []
+    data = []
+    for x in range(len(rows)):
+        if x in [1,3]:
+            for column in rows[x].find_all('td'):
+                headers.append(column.get_text().strip())
+        elif x in [2,4]:
+            for column in rows[x].find_all('td'):
+                data.append(column.get_text().strip())
+
+    for x in range(len(headers)):
+        if data[x]:
+            record = check_key(record, headers[x], data[x])
+
+    for row in table_elements[1].find_all('tr')[2:]:
+        columns = row.find_all('td')
+
+        # Add party information
+        record = check_key(record, columns[1].get_text().strip(), columns[0].get_text().replace("County Specific Financial Summary Search", "").strip())
+
+        # Add DOB(s)
+        record = check_key(record, "DOB", columns[2].get_text().strip())
+        record["Case Status"] = [columns[3].get_text().strip()]
+
+    key_transforms = {
+        "Trial Court Case ID": "Case Number",
+        "Created": "Date Filed",
+        "Originating County": "Location",
+        "Citation Number": "Citation",
+        "DEFENDANT": "Defendant",
+        "PLAINTIFF": "Plaintiff"
     }
-    for table in target_tables:
+
+    return normalize(key_transforms, record)
+
+def type_6(record, soup):
+
+    record_page = soup.find('article', class_="record page")
+    
+    try:
+        record["Case Number"] = [record_page.find('div', class_='ssCaseDetailCaseNbr').find('span').get_text().strip()]
+    except:
+        pass
+
+    fields = {
+        "Case Type:",
+        "Subtype:",
+        "Date Filed:",
+        "Location:",
+        "Cross-Reference Case Number:",
+        "Judicial Officer:",
+        "Uniform Case Number:"
+    }
+    
+    for field_name in fields:
         try:
-            headers = [header.get_text().strip() for header in table.select('tr:nth-of-type(1) > td')]
-            converted_headers = [header_conversion[header] if header in header_conversion else header for header in headers]
-            data = [cell.get_text().strip() for cell in table.select('tr:nth-of-type(2) > td')]
-            if len(data) == len(converted_headers):
-                record.update(dict(zip(converted_headers, data)))
-
-            # if header in header_conversion:
-            #     header = header_conversion[header]
-
+            value = record_page.find('td', text=field_name).find_next('td').text.strip()
+            record.update({field_name: [value]})
         except:
-            continue
+            pass
+    
+    party_element = record_page.find('div', text='Party Information')
+    if party_element:
+        table = party_element.next_sibling
 
-    return record
+        for tr_element in table.find_all('tr'):
+            th_elements = tr_element.find_all('th')
+            try:
+                header, value = [th_elements[n].get_text().strip() for n in range(2)]
+                record = check_key(record, header, value)
+            except:
+                pass
+
+    charges_element = record_page.find('div', text='Charge Information')
+    if charges_element:
+
+        table = charges_element.next_sibling
+        record = extract_table(table, record)
+
+    key_transforms = {
+        "Case Type:": "Case Type",
+        "Subtype:": "SubType",
+        "Date Filed:": "Date Filed",
+        "Location:": "Location",
+        "Cross-Reference Case Number:": "Cross Reference",
+        "Date": "Offense Date",
+        "Judicial Officer:": "Judge"
+    }
+
+    return normalize(key_transforms, record)

@@ -133,6 +133,8 @@ class judy:
                 2: record_types.type_2(record, soup) if record["Type"] == 2 else None,
                 3: record_types.type_3(record, soup) if record["Type"] == 3 else None,
                 4: record_types.type_4(record, soup) if record["Type"] == 4 else None,
+                5: record_types.type_5(record, soup) if record["Type"] == 5 else None,
+                6: record_types.type_6(record, soup) if record["Type"] == 6 else None,
             }
 
             record = available[record["Type"]]
