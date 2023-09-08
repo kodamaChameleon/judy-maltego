@@ -140,6 +140,7 @@ class toCaseDetails(DiscoverableTransform):
                         person_details[entity].addProperty("Associated_with", value = name)
 
             # Iterate through case descriptors
+            case_entity = False
             if record["Case Information"]["Case Number"]:
                 case_entity = response.addEntity("maltego.UniqueIdentifier", value = record["Case Information"]["Case Number"])
                 case_entity.addProperty("identifierType", value = "Case Number")
@@ -165,6 +166,6 @@ class toCaseDetails(DiscoverableTransform):
 
             # Iterate external references
             for ref in record["External Ref"]:
-                response.addEntity("maltego.URL", value = ref)
+                response.addEntity("maltego.Website", value = ref)
 
         trio.run(main) # running our async code in a non-async code
