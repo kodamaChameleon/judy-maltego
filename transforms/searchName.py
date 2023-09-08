@@ -2,7 +2,7 @@ import trio
 from maltego_trx.maltego import MaltegoTransform, MaltegoMsg
 from maltego_trx.transform import DiscoverableTransform
 from extensions import registry, judy_set
-from modules import lookup
+import judge
 
 @registry.register_transform(
     display_name="Get judyrecords search records [judy]", 
@@ -23,7 +23,7 @@ class searchName(DiscoverableTransform):
             search_terms = request.Value
 
             # Conduct search from judyrecords
-            judy = lookup.judy()
+            judy = judge.judy()
             judy.addSearchJob(search_terms, "name")
             status = judy.checkJobStatus()["status"]
             records = judy.aggregateResults(status)

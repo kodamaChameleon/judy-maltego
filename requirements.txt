@@ -1,3 +1,6 @@
 maltego-trx
 requests
 beautifulsoup4
+openai
+trio
+geocoder

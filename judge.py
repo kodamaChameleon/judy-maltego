@@ -1,9 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import json
-from modules import record_types
-# import webbrowser ## For testing only
-
+import openai
 
 # Error code handling
 def check_status(response):
@@ -13,6 +11,52 @@ def check_status(response):
     else:
         print(f"Error: Unable to fetch the search results. Status code: {response.status_code}")
         return False
+    
+# Read api_key to judy class
+def read_api_key():
+    key_path = "openai.key"
+    try:
+        with open(key_path, 'r') as key_file:
+            api_key = key_file.read()
+
+        return api_key
+    except:
+        raise ValueError('OpenAI API key not found')
+    
+# Get clean text from html
+def fetch_text(url, headers):
+
+    # Get text from URL
+    response = requests.get(url, headers = headers)
+
+    # Clean the response
+    if response.ok:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        text_list = soup.get_text(separator = '|#|').split('|#|')
+        text = ''
+        for t in text_list:
+            if t not in ['\n','',' ']:
+                text += ' ' + t.strip()
+                
+        return text
+
+def structure_data(text, api_key):
+
+    # Set up the OpenAI API client
+    openai.api_key = api_key
+
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": 
+             """Fill in as much of the json as possible. Set null if not found.{"People":[{"Name":"","Role": "" (Defendent, Plaintiff, Attorney, Judge, etc.),"Aliases":[""],"DOB": "","Phone":"","Address":""}],"Case Information":{"Case Title":""(usually something like Description, X vs Y),"Case Number":"","Case Type":"","Cross-Reference": "","Citation Number": "","Date Filed": "","Case Status": ""},"Charges":[{"Name":"" (should match a person in People list),"Description":"","Statute":"","Level":"","Offense Date": ""}],"External Ref":[<hyperlinks not from judyrecords.com>]}"""},
+            {"role": "user", "content": text },
+        ]
+    )
+
+    data = json.loads(response["choices"][0]["message"]["content"])
+
+    return data
 
 class judy:
 
@@ -24,6 +68,7 @@ class judy:
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
         }
         self.cookies = None
+        self.api_key = read_api_key()
 
     # Create a search
     def addSearchJob(self, search_terms, input_type):
@@ -104,41 +149,12 @@ class judy:
     # Scrape case details from URL
     def caseDetails(self, record: dict):
 
-        # Send the search request
-        response = requests.get(record["url"], headers=self.headers)
+        # Retreive cleaned text from record at url
+        text = fetch_text(record["url"], headers=self.headers)
 
-        # Parse response for urls
-        soup = BeautifulSoup(response.content, 'html.parser')
-
-        # Classify format to be used
-        with open("data/supported_records.json", "r") as json_file:
-            supported_records = json.load(json_file)
-
-        # First check if it has already been classified (also works as a manual override)
-        if record["Record"] in supported_records:
-            record["Type"] = supported_records[record["Record"]]
-
-        # If not, try using the fingerprint function to assign a classification
-        else:
-            record["Type"] = record_types.fingerprint(soup)
-            if record["Type"]:
-                # webbrowser.open(record['url'])
-                record_types.update_supported(record)
-
-        # Normalize the data
-        if record["Type"]:
-            # Select the format for the appropriate record type
-            available = {
-                1: record_types.type_1(record, soup) if record["Type"] == 1 else None,
-                2: record_types.type_2(record, soup) if record["Type"] == 2 else None,
-                3: record_types.type_3(record, soup) if record["Type"] == 3 else None,
-                4: record_types.type_4(record, soup) if record["Type"] == 4 else None,
-                5: record_types.type_5(record, soup) if record["Type"] == 5 else None,
-                6: record_types.type_6(record, soup) if record["Type"] == 6 else None,
-            }
-
-            record = available[record["Type"]]
-        else:
-            record["Unsupported"] = ["Unsupported Record Type"]
+        # Utilize openai to structure the data
+        data = structure_data(text, self.api_key)
+        record.update(data)
 
         return record
+
