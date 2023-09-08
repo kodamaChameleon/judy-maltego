@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import openai
+import re
 
 # Error code handling
 def check_status(response):
@@ -49,8 +50,12 @@ def structure_data(text, api_key):
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": 
-             """Fill in as much of the json as possible. Set null if not found.{"People":[{"Name":"","Role": "" (Defendent, Plaintiff, Attorney, Judge, etc.),"Aliases":[""],"DOB": "","Phone":"","Address":""}],"Case Information":{"Case Title":""(usually something like Description, X vs Y),"Case Number":"","Case Type":"","Cross-Reference": "","Citation Number": "","Date Filed": "","Case Status": ""},"Charges":[{"Name":"" (should match a person in People list),"Description":"","Statute":"","Level":"","Offense Date": ""}],"External Ref":[<hyperlinks not from judyrecords.com>]}"""},
+             """Fill in as much of the json as possible. Set null if not found. {"People":[{"Name":,"Role": ,"Aliases":[],"DOB": ,"Phone":,"Email":,"Address":}],"Case Information":{"Case Title":,"Case Number":,"Case Type":,"Cross-Reference": ,"Citation Number": ,"Date Filed": ,"Case Status": },"Charges":[{"Name": ,"Description":,"Statute":,"Level":,"Offense Date": }]}"""},
             {"role": "user", "content": text },
+            {"role": "assistant", "content": "json['People']['Role'] examples include Defendent, Plaintiff, Attorney, Judge, etc."},
+            {"role": "assistant", "content": "json['Case Information']['Case Title'] typically follows format 'X vs Y"},
+            {"role": "assistant", "content": "json['Charges']['Name'] should match someone in json['People']['Name']"},
+            {"role": "assistant", "content": "json['People']['Address'] should be a string"},
         ]
     )
 
@@ -155,6 +160,10 @@ class judy:
         # Utilize openai to structure the data
         data = structure_data(text, self.api_key)
         record.update(data)
+
+        # Add any external url references
+        pattern = r'https?://(?!.*\bjudyrecords\.com\b)[^\s/$.?#].[^\s]*'
+        record["External Ref"] = re.findall(pattern, text)
 
         return record
 

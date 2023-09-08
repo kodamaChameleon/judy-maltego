@@ -43,10 +43,10 @@ def format_dates(date_str):
             # If successful, format it in MM/DD/YYYY and return
             return parsed_date.strftime("%m/%d/%Y")
         except ValueError:
-            continue
+            return date_str
     
     # If none of the formats match, return None or raise an exception
-    raise ValueError("Unable to parse the date string")
+    return date_str
 
 def format_phone_number(phone_number):
     # Remove all non-digit characters from the phone number
@@ -69,15 +69,16 @@ def format_phone_number(phone_number):
 def format_location(address):
     maltego_dict= {}
     geocoder_dict =  geocoder.osm(address).json
-    if geocoder_dict.get("status") == "OK":
-        maltego_dict["country"] = geocoder_dict.get("country")
-        maltego_dict["city"] = geocoder_dict.get("city") or geocoder_dict.get("region") or geocoder_dict.get("state")
-        maltego_dict["streetaddress"] = geocoder_dict.get("street", "") + " " + geocoder_dict.get("housenumber", "")
-        maltego_dict["location.areacode"] = geocoder_dict.get("postal", "")
-        maltego_dict["area"] = geocoder_dict.get("county", "")
-        maltego_dict["countrycode"] = geocoder_dict.get("country_code", "")
-        maltego_dict["longitude"] = geocoder_dict.get("lng", "")
-        maltego_dict["latitude"] = geocoder_dict.get("lat", "")
+    if geocoder_dict:
+        if geocoder_dict['ok']:
+            maltego_dict["country"] = geocoder_dict.get("country")
+            maltego_dict["city"] = geocoder_dict.get("city") or geocoder_dict.get("region") or geocoder_dict.get("state")
+            maltego_dict["streetaddress"] = geocoder_dict.get("street", "") + " " + geocoder_dict.get("housenumber", "")
+            maltego_dict["location.areacode"] = geocoder_dict.get("postal", "")
+            maltego_dict["area"] = geocoder_dict.get("county", "")
+            maltego_dict["countrycode"] = geocoder_dict.get("country_code", "")
+            maltego_dict["longitude"] = geocoder_dict.get("lng", "")
+            maltego_dict["latitude"] = geocoder_dict.get("lat", "")
 
     return maltego_dict
 
@@ -119,15 +120,19 @@ class toCaseDetails(DiscoverableTransform):
                     
                     # Create additional PII entities with link label describing to whom they belong (combining in dynamic properties risk overwriting details)
                     person_details = {}
-                    for x in range(len(person["Aliases"])):
-                        if person["Aliases"][x]:
-                            person_details["alias_"+x] = response.addEntity("maltego.Alias", value = format_text(person["Aliases"][x], proper = True))
+                    if person["Aliases"]:
+                        for x in range(len(person["Aliases"])):
+                            person_details["alias_"+str(x)] = response.addEntity("maltego.Alias", value = format_text(person["Aliases"][x], proper = True))
 
                     if person["DOB"]:
                         person_details["DOB"] = response.addEntity("maltego.DateTime", value = format_dates(person["DOB"]))
+                        person_details["DOB"].addProperty("Type", value = "DOB")
 
                     if person["Phone"]:
                         person_details["Phone"] = response.addEntity("maltego.PhoneNumber", value = format_phone_number(person["Phone"]))
+                    
+                    if person["Email"]:
+                        person_details["Email"] = response.addEntity("maltego.EmailAddress", value = format_text(person["Email"]))
 
                     if person["Address"]:
                         person_details["Address"] = response.addEntity("maltego.Location", value = format_text(person["Address"], proper = True))
