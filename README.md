@@ -44,7 +44,7 @@ Import Judy-Maltego.mtz and entities from the entities folder into Maltego to be
 Supported records are located at [data/supported_records.json](https://github.com/kodamaChameleon/judy-maltego/blob/main/data/supported_records.json). If an unsupported record is discovered, judy-maltego will first attempt to fingerprint the record to see if it matches an already known format type. If that fails, results will still come back using searchName or searchPhrase; however, toCaseDetails will return "Unsupported Record Type." Don't see a record you are interested in? Create an issue for us with the name of the record type and an example record you want added (i.e. `https://judyrecords.com/record/<record number here>`). Better yet, you can contribute by forking the repository, testing changes, and making pull requests for yourself. Sigh... wouldn't it be nice if they had an API!
    
 ## 📜 License
-<img src="https://creativecommons.org/images/deed/FreeCulturalWorks_seal_x2.jpg" height="100px">
+<img src="https://mirrors.creativecommons.org/presskit/logos/cc.logo.large.png" height="60px">
 
 [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/)  
 Copyright (C) 2023 KodamaChameleon
